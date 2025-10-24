@@ -1,0 +1,7 @@
+[requires]
+boost/1.83.0
+elfutils/0.190
+
+[generators]
+CMakeDeps
+CMakeToolchain
