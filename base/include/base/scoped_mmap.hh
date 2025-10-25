@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <stdexcept>
 
-namespace RV32 {
+namespace rv32 {
 
 class ScopedMmap final {
  public:
@@ -24,4 +24,4 @@ class ScopedMmap final {
   std::size_t sz_;
   int fd_;
 };
-}  // namespace RV32
+}  // namespace rv32

@@ -1,3 +1,3 @@
-# RV32 Simulator
+# rv32 Simulator
 
 TODO

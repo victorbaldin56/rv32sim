@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // TODO
 
@@ -9,10 +9,10 @@
 #include "base/bit_utils.hh"
 #include "sim/opcodes.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 std::unique_ptr<IInstruction> IInstruction::create(RawInstruction raw) {
-  Opcode opcode = static_cast<Opcode>(Bits::bits(raw, 0, 6));
+  Opcode opcode = static_cast<Opcode>(bits::bits(raw, 0, 6));
   switch (opcode) {
     case Opcode::kOp:
       // R-type
@@ -41,4 +41,4 @@ std::unique_ptr<IInstruction> IInstruction::create(RawInstruction raw) {
       // ILLEGAL
   }
 }
-}
+}  // namespace rv32

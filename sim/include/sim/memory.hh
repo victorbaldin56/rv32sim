@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // Memory.
 
@@ -17,7 +17,7 @@
 
 #include "types.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 class Memory final {
  public:
@@ -56,4 +56,4 @@ class Memory final {
 
   static constexpr Size kAddressSpaceSize = std::numeric_limits<Addr>::max();
 };
-}  // namespace RV32
+}  // namespace rv32

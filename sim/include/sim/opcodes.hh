@@ -1,6 +1,6 @@
 #pragma once
 
-namespace RV32 {
+namespace rv32 {
 
 enum class Opcode {
   kLoad = 0x3,

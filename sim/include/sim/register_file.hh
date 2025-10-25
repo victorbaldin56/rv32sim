@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // Register file.
 
@@ -12,7 +12,7 @@
 #include "config.hh"
 #include "memory.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 class RegisterFile {
  public:
@@ -38,6 +38,6 @@ class RegisterFile {
   void set(std::size_t num, Word value) noexcept { regs_[num] = value; }
 
  private:
-  std::array<Word, Helpers::underlying(Register::kNumRegisters)> regs_;
+  std::array<Word, helpers::underlying(Register::kNumRegisters)> regs_;
 };
-}
+}  // namespace rv32

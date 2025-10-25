@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // Main function.
 
@@ -39,7 +39,7 @@ int main(int argc, char** argv) try {
 
   if (vm.count("args")) {
     auto cmd = vm["args"].as<std::vector<std::string>>();
-    RV32::Simulator sim(cmd);
+    rv32::Simulator sim(cmd);
     sim.run();
   }
 

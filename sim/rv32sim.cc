@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // Simulator class implementation.
 
@@ -13,7 +13,7 @@
 #include "sim/elfloader.hh"
 #include "sim/instruction.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 Simulator::Simulator(const std::vector<std::string>& cmd) {
   auto elf_path = cmd.front();
@@ -40,8 +40,8 @@ void Simulator::createExecutionEnvironment(
   sp -= (sizeof(Addr) * (argc + 1) +
          sizeof(Word));  // to store argc and argv pointers
 
-  assert(Bits::isAligned(sp, Config::kStackAlignment));
-  rf_.set(Helpers::underlying(RegisterFile::Register::kSP),
+  assert(bits::isAligned(sp, Config::kStackAlignment));
+  rf_.set(helpers::underlying(RegisterFile::Register::kSP),
           sp);  // at this point SP will be at program start
 
   mem_.emit(sp, argc);
@@ -62,4 +62,4 @@ void Simulator::loadElf(const std::filesystem::path& path) {
   ElfLoader loader(path);
   loader.load(mem_);
 }
-}
+}  // namespace rv32

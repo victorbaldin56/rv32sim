@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // ELF file loading implementation.
 
@@ -8,7 +8,7 @@
 
 #include "base/scoped_mmap.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 ElfLoader::ElfLoader(const std::filesystem::path& path) : image_(path) {
   if (image_.size() < sizeof(elf_header_)) {
@@ -71,4 +71,4 @@ void ElfLoader::checkElfHeader() const {
     throw Error("ELF machine must be RISCV");
   }
 }
-}  // namespace RV32
+}  // namespace rv32

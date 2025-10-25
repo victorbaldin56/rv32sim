@@ -8,7 +8,7 @@
 #include <cerrno>
 #include <cstring>
 
-namespace RV32 {
+namespace rv32 {
 
 ScopedMmap::ScopedMmap(const std::filesystem::path& path) {
   using namespace std::string_literals;
@@ -39,4 +39,4 @@ ScopedMmap::~ScopedMmap() {
   munmap(data_, sz_);
   close(fd_);
 }
-}
+}  // namespace rv32

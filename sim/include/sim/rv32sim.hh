@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // Simulator class.
 
@@ -13,7 +13,7 @@
 #include "memory.hh"
 #include "register_file.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 class Simulator final {
  public:
@@ -29,4 +29,4 @@ class Simulator final {
   void loadElf(const std::filesystem::path& path);
   void createExecutionEnvironment(const std::vector<std::string>& cmd);
 };
-}
+}  // namespace rv32

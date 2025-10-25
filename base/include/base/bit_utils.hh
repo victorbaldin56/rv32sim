@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace RV32::Bits {
+namespace rv32::bits {
 
 template <typename T>
 constexpr bool isPowerOfTwo(T v) {
@@ -29,4 +29,4 @@ constexpr T bits(T v, unsigned lo, unsigned hi) {
   unsigned width = hi - lo + 1;
   return (v >> lo) & bitMask(width);
 }
-}
+}  // namespace rv32::bits

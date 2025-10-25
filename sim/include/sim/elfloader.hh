@@ -1,6 +1,6 @@
 // See LICENSE for license details.
 
-// rv32sim - a simple RV32 simulator
+// rv32sim - a simple rv32 simulator
 //
 // ELF file loading methods.
 
@@ -14,7 +14,7 @@
 #include "gelf.h"
 #include "memory.hh"
 
-namespace RV32 {
+namespace rv32 {
 
 class ElfLoader final {
  public:
@@ -33,4 +33,4 @@ class ElfLoader final {
 
   void checkElfHeader() const;
 };
-}
+}  // namespace rv32
