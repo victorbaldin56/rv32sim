@@ -10,10 +10,11 @@
 
 #include "base/helpers.hh"
 #include "config.hh"
+#include "memory.hh"
 
 namespace RV32 {
 
-class CPU {
+class RegisterFile {
  public:
   // clang-format off
   enum class Registers : std::size_t {

@@ -32,7 +32,7 @@ void Simulator::createExecutionEnvironment(
          sizeof(Word));  // to store argc and argv pointers
 
   assert(Bits::isAligned(sp, Config::kStackAlignment));
-  cpu_.set(Helpers::underlying(CPU::Registers::kSP),
+  cpu_.set(Helpers::underlying(RegisterFile::Registers::kSP),
            sp);  // at this point SP will be at program start
 
   mem_.emit(sp, argc);

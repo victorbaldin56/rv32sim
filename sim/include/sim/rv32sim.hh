@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "cpu.hh"
 #include "memory.hh"
+#include "register_file.hh"
 
 namespace RV32 {
 
@@ -21,7 +21,7 @@ class Simulator final {
   void run();
 
  private:
-  CPU cpu_;
+  RegisterFile cpu_;
   Memory mem_;
 
   void loadElf(const std::filesystem::path& path);
