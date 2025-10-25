@@ -21,8 +21,10 @@ class Simulator final {
   void run();
 
  private:
-  RegisterFile cpu_;
+  RegisterFile rf_;
   Memory mem_;
+
+  Addr pc_ = 0;
 
   void loadElf(const std::filesystem::path& path);
   void createExecutionEnvironment(const std::vector<std::string>& cmd);

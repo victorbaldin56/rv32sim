@@ -11,6 +11,7 @@
 #include "base/bit_utils.hh"
 #include "sim/config.hh"
 #include "sim/elfloader.hh"
+#include "sim/instruction.hh"
 
 namespace RV32 {
 
@@ -20,7 +21,15 @@ Simulator::Simulator(const std::vector<std::string>& cmd) {
   createExecutionEnvironment(cmd);
 }
 
-void Simulator::run() {}
+void Simulator::run() {
+  IInstruction::ExecutionResult res;
+
+  do {
+    RawInstruction raw = mem_.get<RawInstruction>(pc_);
+    auto instruction = IInstruction::create(raw);
+    res = instruction->execute(*this);
+  } while (res != IInstruction::ExecutionResult::kExit);
+}
 
 void Simulator::createExecutionEnvironment(
     const std::vector<std::string>& cmd) {
@@ -32,8 +41,8 @@ void Simulator::createExecutionEnvironment(
          sizeof(Word));  // to store argc and argv pointers
 
   assert(Bits::isAligned(sp, Config::kStackAlignment));
-  cpu_.set(Helpers::underlying(RegisterFile::Registers::kSP),
-           sp);  // at this point SP will be at program start
+  rf_.set(Helpers::underlying(RegisterFile::Register::kSP),
+          sp);  // at this point SP will be at program start
 
   mem_.emit(sp, argc);
   sp += sizeof(Word);

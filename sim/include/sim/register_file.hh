@@ -2,7 +2,7 @@
 
 // rv32sim - a simple RV32 simulator
 //
-// Virtual CPU.
+// Register file.
 
 #pragma once
 
@@ -17,7 +17,7 @@ namespace RV32 {
 class RegisterFile {
  public:
   // clang-format off
-  enum class Registers : std::size_t {
+  enum class Register {
     kZero =  0,
     kRA   =  1,
     kSP   =  2,
@@ -38,6 +38,6 @@ class RegisterFile {
   void set(std::size_t num, Word value) noexcept { regs_[num] = value; }
 
  private:
-  std::array<Word, Helpers::underlying(Registers::kNumRegisters)> regs_;
+  std::array<Word, Helpers::underlying(Register::kNumRegisters)> regs_;
 };
 }

@@ -12,6 +12,7 @@
 #include <cstring>
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #include "types.hh"
@@ -26,6 +27,11 @@ class Memory final {
     std::memcpy(&mem_[dst], src, sz);
   }
 
+  void copy(void* dst, Addr src, Size sz) noexcept {
+    assert(src + sz <= mem_.size());
+    std::memcpy(dst, &mem_[src], sz);
+  }
+
   void memset(Addr p, Byte byte, Size sz) noexcept {
     assert(p + sz <= mem_.size());
     std::memset(&mem_[p], byte, sz);
@@ -33,7 +39,16 @@ class Memory final {
 
   template <typename T>
   void emit(Addr p, T value) noexcept {
-    copy(p, &value, sizeof(value));
+    static_assert(std::is_standard_layout_v<T>);
+    copy(p, std::addressof(value), sizeof(value));
+  }
+
+  template <typename T>
+  T get(Addr p) {
+    static_assert(std::is_standard_layout_v<T>);
+    T value;
+    copy(std::addressof(value), p, sizeof(value));
+    return value;
   }
 
  private:
