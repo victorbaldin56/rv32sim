@@ -25,7 +25,23 @@ ElfLoader::ElfLoader(const std::filesystem::path& path) : image_(path) {
   program_headers_start_ = image_.data() + elf_header_.e_shoff;
 }
 
-void ElfLoader::load(Memory& mem) {}
+void ElfLoader::load(Memory& mem) const {
+  Byte* phdr = program_headers_start_;
+  for (std::size_t i = 0; i < elf_header_.e_phnum;
+       ++i, phdr += sizeof(Elf32_Phdr)) {  // considering strict aliasing
+    Elf32_Phdr hdr;
+    std::memcpy(&hdr, phdr, sizeof(hdr));
+
+    if (hdr.p_type == PT_LOAD) {
+      mem.copy(hdr.p_vaddr, image_.data() + hdr.p_offset, hdr.p_filesz);
+
+      if (hdr.p_memsz > hdr.p_filesz) {
+        mem.memset(hdr.p_vaddr + hdr.p_filesz, 0, hdr.p_memsz - hdr.p_filesz);
+      }
+    }
+    // TODO: properly handle missing cases
+  }
+}
 
 void ElfLoader::checkElfHeader() const {
   if (std::memcmp(elf_header_.e_ident + EI_MAG0, ELFMAG, SELFMAG) != 0) {

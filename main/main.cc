@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "boost/program_options.hpp"
+#include "sim/rv32sim.hh"
 
 namespace po = boost::program_options;
 
@@ -18,7 +19,8 @@ int main(int argc, char** argv) try {
   // clang-format off
   desc.add_options()
     ("help,h", "Print help message and exit")
-    ("args", "User command line to execute");
+    ("args", po::value<std::vector<std::string>>()->multitoken(),
+             "User command line to execute: --args <program> [args...]");
   // clang-format on
 
   po::positional_options_description p;
@@ -37,6 +39,8 @@ int main(int argc, char** argv) try {
 
   if (vm.count("args")) {
     auto cmd = vm["args"].as<std::vector<std::string>>();
+    RV32::Simulator sim(cmd);
+    sim.run();
   }
 
   return 0;

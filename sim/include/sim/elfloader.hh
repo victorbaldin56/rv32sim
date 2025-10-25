@@ -19,7 +19,7 @@ namespace RV32 {
 class ElfLoader final {
  public:
   ElfLoader(const std::filesystem::path& path);
-  void load(Memory& mem);
+  void load(Memory& mem) const;
 
   class Error : public std::runtime_error {
    public:
@@ -29,7 +29,7 @@ class ElfLoader final {
  private:
   ScopedMmap image_;
   Elf32_Ehdr elf_header_;
-  std::uint8_t* program_headers_start_;
+  Byte* program_headers_start_;
 
   void checkElfHeader() const;
 };

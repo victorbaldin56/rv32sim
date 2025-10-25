@@ -10,25 +10,35 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <limits>
 #include <stdexcept>
 #include <vector>
+
+#include "types.hh"
 
 namespace RV32 {
 
 class Memory final {
  public:
-  using Size_t = std::uint32_t;
-  using Addr_t = std::uint32_t;
-
-  Memory() : mem_(kMemorySize) {}
-  void load(Addr_t dst, const void* src, Size_t sz) noexcept {
+  Memory() : mem_(kAddressSpaceSize) {}
+  void copy(Addr dst, const void* src, Size sz) noexcept {
     assert(dst + sz <= mem_.size());
     std::memcpy(&mem_[dst], src, sz);
   }
 
- private:
-  std::vector<std::uint8_t> mem_;
+  void memset(Addr p, Byte byte, Size sz) noexcept {
+    assert(p + sz <= mem_.size());
+    std::memset(&mem_[p], byte, sz);
+  }
 
-  static constexpr Size_t kMemorySize = 0xffffffff;
+  template <typename T>
+  void emit(Addr p, T value) noexcept {
+    copy(p, &value, sizeof(value));
+  }
+
+ private:
+  std::vector<Byte> mem_;
+
+  static constexpr Size kAddressSpaceSize = std::numeric_limits<Addr>::max();
 };
 }  // namespace RV32

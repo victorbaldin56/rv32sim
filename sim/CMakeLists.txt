@@ -1,5 +1,8 @@
-add_library(sim rv32sim.cc)
+add_library(sim
+  rv32sim.cc
+  elfloader.cc
+)
 target_link_libraries(sim PUBLIC elfutils::elfutils)
-target_link_libraries(sim PRIVATE base)
+target_link_libraries(sim PUBLIC base)
 target_include_directories(sim PUBLIC include)
-target_compile_features(sim PUBLIC cxx_std_17)
+target_compile_features(sim PUBLIC cxx_std_20)

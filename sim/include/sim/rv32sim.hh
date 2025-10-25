@@ -18,11 +18,13 @@ namespace RV32 {
 class Simulator final {
  public:
   Simulator(const std::vector<std::string>& cmd);
+  void run();
 
  private:
   CPU cpu_;
   Memory mem_;
 
   void loadElf(const std::filesystem::path& path);
+  void createExecutionEnvironment(const std::vector<std::string>& cmd);
 };
 }
