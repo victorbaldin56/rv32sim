@@ -25,15 +25,54 @@ class IInstruction {
   virtual ~IInstruction() {}
 };
 
-class InstructionTypeR : public IInstruction {};
+class InstructionTypeR : public IInstruction {
+ protected:
+  Word opcode_;
+  Word rd_;
+  Word funct3_;
+  Word rs1_;
+  Word rs2_;
+  Word funct7_;
+};
 
-class InstructionTypeI : public IInstruction {};
+class InstructionTypeI : public IInstruction {
+ protected:
+  Word opcode_;
+  Word rd_;
+  Word funct3_;
+  Word rs1_;
+  Word imm_;
+};
 
-class InstructionTypeS : public IInstruction {};
+class InstructionTypeS : public IInstruction {
+ protected:
+  Word opcode_;
+  Word funct3_;
+  Word rs1_;
+  Word rs2_;
+  Word imm_;
+};
 
-class InstructionTypeU : public IInstruction {};
+class InstructionTypeU : public IInstruction {
+ protected:
+  Word opcode_;
+  Word rd_;
+  Word imm_;
+};
 
-class InstructionTypeB : public IInstruction {};
+class InstructionTypeB : public IInstruction {
+ protected:
+  Word opcode_;
+  Word funct3_;
+  Word rs1_;
+  Word rs2_;
+  Word imm_;
+};
 
-class InstructionTypeJ : public IInstruction {};
+class InstructionTypeJ : public IInstruction {
+ protected:
+  Word opcode_;
+  Word rd_;
+  Word imm_;
+};
 }
