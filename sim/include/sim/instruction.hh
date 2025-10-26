@@ -22,7 +22,7 @@ class IInstruction {
 
   virtual ExecutionResult execute(SimulatorState& sim,
                                   const Operands& ops) const = 0;
-  virtual std::string getName() const = 0;
+  virtual const char* getName() const noexcept = 0;
   virtual ExtendedOpcode getExtendedOpcode() const noexcept = 0;
   virtual ~IInstruction() {}
 };
