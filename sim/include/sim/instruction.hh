@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 
+#include "opcodes.hh"
 #include "state.hh"
 
 namespace rv32 {
@@ -20,6 +21,7 @@ class IInstruction {
 
   virtual ExecutionResult execute(SimulatorState& sim) const = 0;  // FIXME
   virtual std::string getName() const = 0;
+  virtual ExtendedOpcode getExtendedOpcode() const noexcept = 0;
   virtual ~IInstruction() {}
 };
 }  // namespace rv32

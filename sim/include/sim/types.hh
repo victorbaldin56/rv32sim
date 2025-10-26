@@ -18,5 +18,4 @@ using HalfWord = std::uint16_t;
 using Word = std::uint32_t;
 
 using RawInstruction = std::uint32_t;
-using ExtendedOpcode = std::uint32_t;
 }  // namespace rv32

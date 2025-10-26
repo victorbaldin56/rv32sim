@@ -2,7 +2,7 @@
 
 #include "base/bit_utils.hh"
 #include "sim/opcodes.hh"
-
+/*
 namespace rv32 {
 namespace {
 
@@ -75,3 +75,4 @@ InstructionDecodeInfo decodeInstruction(RawInstruction raw) {
                          decodeTypeB(raw), decodeTypeU(raw), decodeTypeJ(raw));
 }
 }  // namespace rv32
+*/

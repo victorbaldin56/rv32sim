@@ -2,10 +2,12 @@
 
 #include <tuple>
 
-#include "types.hh"
+#include "base/bit_utils.hh"
+#include "opcodes.hh"
 
 namespace rv32 {
 
+/*
 struct InstructionDecodeInfoTypeR {
   std::uint32_t opcode;
   std::uint32_t rd;
@@ -50,13 +52,8 @@ struct InstructionDecodeInfoTypeJ {
   std::uint32_t rd;
   std::int32_t imm;
 };
+*/
 
 // we will decide which encoding is correct after lookup in registry.
 // this is for better code without duplication
-using InstructionDecodeInfo =
-    std::tuple<InstructionDecodeInfoTypeR, InstructionDecodeInfoTypeI,
-               InstructionDecodeInfoTypeS, InstructionDecodeInfoTypeB,
-               InstructionDecodeInfoTypeU, InstructionDecodeInfoTypeJ>;
-
-InstructionDecodeInfo decodeInstruction(RawInstruction raw);
 }
