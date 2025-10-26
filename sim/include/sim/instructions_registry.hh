@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
 #include <tuple>
 #include <unordered_map>
 
@@ -10,7 +11,7 @@ namespace rv32 {
 
 class InstructionsRegistry {
  public:
-  void add(std::unique_ptr<IInstruction>& inst);
+  void add(std::unique_ptr<IInstruction> inst);
   const IInstruction* get(RawInstruction raw) const noexcept;
 
   class Error : public std::runtime_error {

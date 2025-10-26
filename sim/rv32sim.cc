@@ -30,6 +30,10 @@ void Simulator::run() {
   do {
     RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc);
     const IInstruction* inst = instructions_registry_.get(raw);
+    if (inst == nullptr) {
+      throw IllegalInstruction();
+    }
+
     const Operands operands = extractOperands(raw);
     res = inst->execute(state_, operands);
   } while (res != IInstruction::ExecutionResult::kExit);

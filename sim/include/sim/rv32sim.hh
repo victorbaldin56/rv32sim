@@ -7,6 +7,7 @@
 #pragma once
 
 #include <filesystem>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,16 @@ class Simulator final {
  public:
   Simulator(const std::vector<std::string>& cmd);
   void run();
+
+  class RVException : public std::runtime_error {
+   public:
+    using std::runtime_error::runtime_error;
+  };
+
+  class IllegalInstruction : public RVException {
+   public:
+    IllegalInstruction() : RVException("Illegal instruction") {}
+  };
 
  private:
   SimulatorState state_;

@@ -11,7 +11,7 @@
 
 namespace rv32 {
 
-enum class BaseOpcode : std::uint8_t {
+enum class RawOpcode : std::uint8_t {
   kLoad = 0x3,
   kMiscMem = 0xf,
   kOpImm = 0x13,
@@ -34,7 +34,7 @@ struct ExtendedOpcodeHash {
 
 class Opcode {
  public:
-  constexpr Opcode(BaseOpcode opcode)
+  constexpr Opcode(RawOpcode opcode)
       : opcode_(static_cast<RawInstruction>(opcode)) {}
   constexpr Opcode(RawInstruction raw) noexcept
       : opcode_(bits::extractBits(raw, 0, 6)) {}
@@ -47,7 +47,7 @@ class Opcode {
 
 class Opcode3 : public Opcode {
  public:
-  constexpr Opcode3(BaseOpcode opcode, std::uint8_t funct3)
+  constexpr Opcode3(RawOpcode opcode, std::uint8_t funct3)
       : Opcode(opcode), funct3_(funct3) {}
   constexpr Opcode3(RawInstruction raw) noexcept
       : Opcode(raw), funct3_(bits::extractBits(raw, 12, 14)) {}
@@ -62,8 +62,7 @@ class Opcode3 : public Opcode {
 
 class Opcode37 : public Opcode3 {
  public:
-  constexpr Opcode37(BaseOpcode opcode, std::uint8_t funct3,
-                     std::uint8_t funct7)
+  constexpr Opcode37(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct7)
       : Opcode3(opcode, funct3), funct7_(funct7) {}
   constexpr Opcode37(RawInstruction raw) noexcept
       : Opcode3(raw), funct7_(bits::extractBits(raw, 25, 31)) {}

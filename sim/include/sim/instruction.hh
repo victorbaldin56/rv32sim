@@ -6,9 +6,7 @@
 
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <string>
+#include <string_view>
 
 #include "opcodes.hh"
 #include "operands.hh"
@@ -22,8 +20,8 @@ class IInstruction {
 
   virtual ExecutionResult execute(SimulatorState& sim,
                                   const Operands& ops) const = 0;
-  virtual const char* getName() const noexcept = 0;
-  virtual ExtendedOpcode getExtendedOpcode() const noexcept = 0;
+  virtual constexpr std::string_view getName() const noexcept = 0;
+  virtual constexpr ExtendedOpcode getExtendedOpcode() const noexcept = 0;
   virtual ~IInstruction() {}
 };
 }  // namespace rv32

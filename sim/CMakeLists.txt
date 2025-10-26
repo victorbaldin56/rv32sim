@@ -1,6 +1,7 @@
 add_library(sim
   rv32sim.cc
   elfloader.cc
+  instructions_registry.cc
 )
 target_link_libraries(sim PUBLIC elfutils::elfutils)
 target_link_libraries(sim PUBLIC base)
