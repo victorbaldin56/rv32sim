@@ -10,9 +10,9 @@ namespace rv32 {
 class InstructionsRegistry {
  public:
   bool addInstruction(std::unique_ptr<IInstruction> inst);
-  IInstruction* find(std::uint32_t ext_opcode);
+  const IInstruction* get(RawInstruction raw) const;
 
  private:
-  std::unordered_map<std::uint32_t, std::unique_ptr<IInstruction>> map_;
+  std::unordered_map<ExtendedOpcode, std::unique_ptr<IInstruction>> map_;
 };
 }

@@ -12,6 +12,7 @@
 #include "sim/config.hh"
 #include "sim/elfloader.hh"
 #include "sim/instruction.hh"
+#include "sim/isa/rv32i/rv32i.hh"
 
 namespace rv32 {
 
@@ -19,15 +20,16 @@ Simulator::Simulator(const std::vector<std::string>& cmd) {
   auto elf_path = cmd.front();
   loadElf(elf_path);
   createExecutionEnvironment(cmd);
+  rv32i::registerInstructions(instructions_registry_);
 }
 
 void Simulator::run() {
   IInstruction::ExecutionResult res;
 
   do {
-    RawInstruction raw = mem_.get<RawInstruction>(pc_);
-    auto instruction = IInstruction::create(raw);
-    res = instruction->execute(*this);
+    RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc);
+    const IInstruction* inst = instructions_registry_.get(raw);
+    res = inst->execute(state_);
   } while (res != IInstruction::ExecutionResult::kExit);
 }
 
@@ -41,25 +43,25 @@ void Simulator::createExecutionEnvironment(
          sizeof(Word));  // to store argc and argv pointers
 
   assert(bits::isAligned(sp, Config::kStackAlignment));
-  rf_.set(helpers::underlying(RegisterFile::Register::kSP),
-          sp);  // at this point SP will be at program start
+  state_.rf.set(helpers::underlying(RegisterFile::Register::kSP),
+                sp);  // at this point SP will be at program start
 
-  mem_.emit(sp, argc);
+  state_.mem.emit(sp, argc);
   sp += sizeof(Word);
 
   for (const auto& arg : cmd) {
-    mem_.copy(arg_string_addr, arg.c_str(), arg.size());
-    mem_.emit(sp, arg_string_addr);
+    state_.mem.copy(arg_string_addr, arg.c_str(), arg.size());
+    state_.mem.emit(sp, arg_string_addr);
     sp += sizeof(Addr);
     arg_string_addr += arg.size();
   }
 
-  mem_.emit(sp, static_cast<Addr>(0));  // argv[argc] = nullptr
+  state_.mem.emit(sp, static_cast<Addr>(0));  // argv[argc] = nullptr
   sp += sizeof(Addr);
 }
 
 void Simulator::loadElf(const std::filesystem::path& path) {
   ElfLoader loader(path);
-  loader.load(mem_);
+  loader.load(state_.mem);
 }
 }  // namespace rv32

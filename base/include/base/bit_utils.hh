@@ -24,9 +24,17 @@ constexpr bool isAligned(T v, std::size_t alignment) {
 constexpr std::uintmax_t bitMask(unsigned width) { return (1u << width) - 1u; }
 
 template <typename T>
-constexpr T bits(T v, unsigned lo, unsigned hi) {
+constexpr T extractBits(T v, unsigned lo, unsigned hi) {
   static_assert(std::is_integral_v<T>);
   unsigned width = hi - lo + 1;
   return (v >> lo) & bitMask(width);
+}
+
+template <typename U>
+constexpr auto signExtend(U x, unsigned width) {
+  static_assert(std::is_unsigned_v<U>);
+  using T = std::make_signed_t<U>;
+  unsigned shift = sizeof(U) - width;
+  return static_cast<T>(static_cast<T>(x << shift) >> shift);
 }
 }  // namespace rv32::bits

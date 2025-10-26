@@ -12,6 +12,7 @@
 
 #include "memory.hh"
 #include "register_file.hh"
+#include "sim/instructions_registry.hh"
 
 namespace rv32 {
 
@@ -21,10 +22,8 @@ class Simulator final {
   void run();
 
  private:
-  RegisterFile rf_;
-  Memory mem_;
-
-  Addr pc_ = 0;
+  SimulatorState state_;
+  InstructionsRegistry instructions_registry_;
 
   void loadElf(const std::filesystem::path& path);
   void createExecutionEnvironment(const std::vector<std::string>& cmd);
