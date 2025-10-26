@@ -78,4 +78,22 @@ class Opcode37 : public Opcode3 {
 
 using ExtendedOpcodeTuple = std::tuple<Opcode, Opcode3, Opcode37>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
+
+class ExtendedOpcodesCreator {
+ public:
+  static constexpr ExtendedOpcodeTuple create(RawInstruction r) {
+    return TupleFiller<ExtendedOpcodeTuple>::fill(r);
+  }
+
+ private:
+  template <typename Tuple>
+  struct TupleFiller;
+
+  template <typename... Types>
+  struct TupleFiller<std::tuple<Types...>> {
+    static constexpr std::tuple<Types...> fill(RawInstruction r) {
+      return std::make_tuple(Types(r)...);
+    }
+  };
+};
 }
