@@ -11,6 +11,7 @@
 #include <string>
 
 #include "opcodes.hh"
+#include "operands.hh"
 #include "state.hh"
 
 namespace rv32 {
@@ -19,7 +20,8 @@ class IInstruction {
  public:
   enum class ExecutionResult { kOk, kExit };
 
-  virtual ExecutionResult execute(SimulatorState& sim) const = 0;  // FIXME
+  virtual ExecutionResult execute(SimulatorState& sim,
+                                  const Operands& ops) const = 0;
   virtual std::string getName() const = 0;
   virtual ExtendedOpcode getExtendedOpcode() const noexcept = 0;
   virtual ~IInstruction() {}

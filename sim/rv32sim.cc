@@ -13,6 +13,7 @@
 #include "sim/elfloader.hh"
 #include "sim/instruction.hh"
 #include "sim/isa/rv32i/rv32i.hh"
+#include "sim/operands.hh"
 
 namespace rv32 {
 
@@ -29,7 +30,8 @@ void Simulator::run() {
   do {
     RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc);
     const IInstruction* inst = instructions_registry_.get(raw);
-    res = inst->execute(state_);
+    const Operands operands = extractOperands(raw);
+    res = inst->execute(state_, operands);
   } while (res != IInstruction::ExecutionResult::kExit);
 }
 
@@ -57,7 +59,6 @@ void Simulator::createExecutionEnvironment(
   }
 
   state_.mem.emit(sp, static_cast<Addr>(0));  // argv[argc] = nullptr
-  sp += sizeof(Addr);
 }
 
 void Simulator::loadElf(const std::filesystem::path& path) {

@@ -18,4 +18,7 @@ using HalfWord = std::uint16_t;
 using Word = std::uint32_t;
 
 using RawInstruction = std::uint32_t;
+
+using Immediate = std::int32_t;
+using RegNum = std::uint32_t;
 }  // namespace rv32
