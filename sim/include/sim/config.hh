@@ -9,7 +9,7 @@
 #pragma once
 
 // TODO: как то поделить
-namespace rv32::Config {
+namespace rv32::config {
 
 constexpr Addr kStackTop = 0x7fffffff;
 
@@ -17,4 +17,4 @@ constexpr Size kPageSize = 0x1000;
 constexpr Size kArgMax = 0x20 * kPageSize;  // as in Linux
 
 constexpr Size kStackAlignment = 0x10;
-}  // namespace rv32::Config
+}  // namespace rv32::config

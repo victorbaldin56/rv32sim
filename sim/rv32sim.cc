@@ -36,13 +36,13 @@ void Simulator::run() {
 void Simulator::createExecutionEnvironment(
     const std::vector<std::string>& cmd) {
   Word argc = cmd.size();
-  Addr sp = Config::kStackTop -
-            Config::kArgMax;  // to leave space to store whole argv strings
+  Addr sp = config::kStackTop -
+            config::kArgMax;  // to leave space to store whole argv strings
   Addr arg_string_addr = sp;
   sp -= (sizeof(Addr) * (argc + 1) +
          sizeof(Word));  // to store argc and argv pointers
 
-  assert(bits::isAligned(sp, Config::kStackAlignment));
+  assert(bits::isAligned(sp, config::kStackAlignment));
   state_.rf.set(helpers::underlying(RegisterFile::Register::kSP),
                 sp);  // at this point SP will be at program start
 
