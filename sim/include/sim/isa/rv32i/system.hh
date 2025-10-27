@@ -18,7 +18,7 @@ struct OpEcall {
   static constexpr ExtendedOpcode kExtendedOpcode =
       RawInstruction(0x00000000 | helpers::underlying(RawOpcode::kSystem));
 
-  ExecutionResult execute(SimulatorState& state) {
+  static ExecutionResult execute(SimulatorState& state) {
     return SimulatorState::ecall(state);
   }
 };
