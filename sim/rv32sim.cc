@@ -17,8 +17,17 @@
 
 namespace rv32 {
 
-Simulator::Simulator(const std::vector<std::string>& cmd) {
-  auto elf_path = cmd.front();
+using namespace std::string_literals;
+
+Simulator::Simulator(const std::vector<std::string>& cmd)
+    : logger_(spdlog::stderr_color_mt("Simulator")) {
+  logger_->set_level(
+      static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
+  std::string argv_log_string =
+      std::accumulate(cmd.begin(), cmd.end(), "command line: "s);
+  SPDLOG_LOGGER_TRACE(logger_, "{}", argv_log_string);
+
+  std::filesystem::path elf_path = cmd.front();
   loadElf(elf_path);
   createExecutionEnvironment(cmd);
   rv32i::registerInstructions(instructions_registry_);
@@ -31,7 +40,7 @@ void Simulator::run() {
     RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc.get());
     const IInstruction* inst = instructions_registry_.get(raw);
     if (inst == nullptr) {
-      throw IllegalInstruction();
+      throw IllegalInstruction(state_.pc.get());
     }
 
     const Operands operands = extractOperands(raw);

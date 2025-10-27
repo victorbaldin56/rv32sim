@@ -3,6 +3,7 @@ project(rv32sim)
 
 find_package(Boost REQUIRED)
 find_package(elfutils REQUIRED)
+find_package(spdlog REQUIRED)
 
 add_subdirectory(base)
 add_subdirectory(sim)
