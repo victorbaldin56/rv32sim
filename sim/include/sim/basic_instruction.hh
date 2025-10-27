@@ -15,16 +15,4 @@ class BasicInstruction : public IInstruction {
     return Op::kExtendedOpcode;
   }
 };
-
-template <typename Op, typename... ValueGetters>
-class ArithInstruction : public BasicInstruction<Op> {
- public:
-  ExecutionResult execute(SimulatorState& state,
-                          const Operands& operands) const override {
-    state.rf.set(RegNumGetter<OperandKind::kRD>::get(state, operands),
-                 Op::eval(ValueGetters::get(state, operands)...));
-    ++state.pc;
-    return ExecutionResult::kOk;
-  }
-};
 }  // namespace rv32

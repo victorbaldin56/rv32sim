@@ -17,7 +17,7 @@ namespace rv32 {
 class RegisterFile {
  public:
   // clang-format off
-  enum class Register {
+  enum class Register : std::size_t {
     kZero =  0,
     kRA   =  1,
     kSP   =  2,
@@ -35,7 +35,14 @@ class RegisterFile {
   // clang-format on
 
   Word get(std::size_t num) const noexcept { return regs_[num]; }
+  Word get(Register num) const noexcept {
+    return get(helpers::underlying(num));
+  }
+
   void set(std::size_t num, Word value) noexcept { regs_[num] = value; }
+  void set(Register num, Word value) noexcept {
+    regs_[helpers::underlying(num)] = value;
+  }
 
  private:
   std::array<Word, helpers::underlying(Register::kNumRegisters)> regs_;

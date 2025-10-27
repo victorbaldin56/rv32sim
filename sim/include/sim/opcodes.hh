@@ -75,7 +75,8 @@ class Opcode37 : public Opcode3 {
   const RawInstruction funct7_;
 };
 
-using ExtendedOpcodeTuple = std::tuple<Opcode, Opcode3, Opcode37>;
+using ExtendedOpcodeTuple =
+    std::tuple<Opcode, Opcode3, Opcode37, RawInstruction>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
 class ExtendedOpcodesCreator {

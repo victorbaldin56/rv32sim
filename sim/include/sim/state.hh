@@ -12,14 +12,12 @@ class ProgramCounter final {
  public:
   static constexpr std::size_t kInstructionAlignment = 4;
 
-  enum class SetStatus { kOk, kMisalignment };
-
   Addr get() const noexcept { return pc_; }
-  SetStatus set(Addr ja) {
+  ExecutionResult set(Addr ja) {
     pc_ = ja;
     return bits::isAligned(pc_, kInstructionAlignment)
-               ? SetStatus::kOk
-               : SetStatus::kMisalignment;
+               ? ExecutionResult::kOk
+               : ExecutionResult::kMisalignment;
   }
 
   ProgramCounter& operator++() noexcept {
@@ -41,5 +39,13 @@ struct SimulatorState {
   RegisterFile rf;
   Memory mem;
   ProgramCounter pc;
+
+  static ExecutionResult ecall(SimulatorState& state);
+
+  enum class Syscall {
+    kRead = 63,
+    kWrite = 64,
+    kExit = 93,
+  };
 };
 }

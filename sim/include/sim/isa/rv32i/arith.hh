@@ -1,10 +1,10 @@
 #pragma once
 
-#include "sim/basic_instruction.hh"
+#include "sim/arith_instruction.hh"
 #include "sim/opcodes.hh"
-#include "sim/operands.hh"
 
 namespace rv32::rv32i {
+
 struct OpLui {
   static constexpr std::string_view kName = "lui";
   static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kLui);

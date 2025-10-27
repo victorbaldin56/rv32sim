@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <unistd.h>
+
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -50,6 +52,18 @@ class Memory final {
     T value;
     copy(std::addressof(value), p, sizeof(value));
     return value;
+  }
+
+  // TODO: error handling
+  ssize_t read(int fd, Addr buf, Size count) {
+    assert(buf + count <= mem_.size());
+    return ::read(fd, &mem_[buf], count);
+  }
+
+  // TODO: error handling
+  ssize_t write(int fd, Addr buf, Size count) const {
+    assert(buf + count <= mem_.size());
+    return ::write(fd, &mem_[buf], count);
   }
 
  private:

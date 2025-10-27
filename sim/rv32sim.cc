@@ -38,7 +38,7 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
 void Simulator::run() {
   ExecutionResult res;
 
-  do {
+  while (true) {
     RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc.get());
     const IInstruction* inst = instructions_registry_.get(raw);
     if (inst == nullptr) {
@@ -47,9 +47,15 @@ void Simulator::run() {
 
     const Operands operands = extractOperands(raw);
     res = inst->execute(state_, operands);
-    if (res == ExecutionResult::kMisalignment) {
+    if (res == ExecutionResult::kOk) {
+      continue;
     }
-  } while (res != ExecutionResult::kExit);
+    if (res == ExecutionResult::kExit) {
+      break;
+    }
+
+    throw RVException("", state_.pc.get());  // FIXME
+  }
 }
 
 void Simulator::createExecutionEnvironment(
@@ -82,5 +88,27 @@ void Simulator::loadElf(const std::filesystem::path& path) {
   ElfLoader loader(path);
   loader.load(state_.mem);
   state_.pc.set(loader.getEntryPC());
+}
+
+ExecutionResult SimulatorState::ecall(SimulatorState& state) {
+  using enum RegisterFile::Register;
+
+  Word syscall = state.rf.get(kA7);
+
+  switch (static_cast<Syscall>(syscall)) {
+    case Syscall::kRead:
+      state.rf.set(kA0, state.mem.read(std::bit_cast<int>(state.rf.get(kA0)),
+                                       state.rf.get(kA1), state.rf.get(kA2)));
+      return ExecutionResult::kOk;
+    case Syscall::kWrite:
+      state.rf.set(kA0, state.mem.write(std::bit_cast<int>(state.rf.get(kA0)),
+                                        state.rf.get(kA1), state.rf.get(kA2)));
+      return ExecutionResult::kOk;
+    case Syscall::kExit:
+      return ExecutionResult::kExit;
+    default:
+      throw Simulator::RVException(
+          std::format("Unimplemented syscall {}", syscall), state.pc.get());
+  }
 }
 }  // namespace rv32
