@@ -15,6 +15,7 @@
 #include <type_traits>
 #include <vector>
 
+#include "boost/core/noinit_adaptor.hpp"
 #include "types.hh"
 
 namespace rv32 {
@@ -52,7 +53,7 @@ class Memory final {
   }
 
  private:
-  std::vector<Byte> mem_;
+  std::vector<Byte, boost::noinit_adaptor<std::allocator<Byte>>> mem_;
 
   static constexpr Size kAddressSpaceSize = std::numeric_limits<Addr>::max();
 };
