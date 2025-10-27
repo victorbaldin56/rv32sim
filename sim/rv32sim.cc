@@ -81,5 +81,6 @@ void Simulator::createExecutionEnvironment(
 void Simulator::loadElf(const std::filesystem::path& path) {
   ElfLoader loader(path);
   loader.load(state_.mem);
+  state_.pc.set(loader.getEntryPC());
 }
 }  // namespace rv32
