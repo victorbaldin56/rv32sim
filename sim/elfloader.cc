@@ -6,23 +6,23 @@
 
 #include "sim/elfloader.hh"
 
-#include "base/scoped_mmap.hh"
-
 namespace rv32 {
 
-ElfLoader::ElfLoader(const std::filesystem::path& path) : image_(path) {
-  if (image_.size() < sizeof(elf_header_)) {
+ElfLoader::ElfLoader(const std::filesystem::path& path)
+    : mmaped_elf_(path),
+      elf_image_(static_cast<std::uint8_t*>(mmaped_elf_.data())) {
+  if (mmaped_elf_.size() < sizeof(elf_header_)) {
     throw Error("File too short");
   }
 
-  std::memcpy(&elf_header_, image_.data(), sizeof(elf_header_));
+  std::memcpy(&elf_header_, elf_image_, sizeof(elf_header_));
   checkElfHeader();
 
-  if (image_.size() <
+  if (mmaped_elf_.size() <
       elf_header_.e_phoff + elf_header_.e_phnum * sizeof(Elf32_Phdr)) {
     throw Error("File too short");
   }
-  program_headers_start_ = image_.data() + elf_header_.e_shoff;
+  program_headers_start_ = elf_image_ + elf_header_.e_shoff;
 }
 
 void ElfLoader::load(Memory& mem) const {
@@ -33,7 +33,7 @@ void ElfLoader::load(Memory& mem) const {
     std::memcpy(&hdr, phdr, sizeof(hdr));
 
     if (hdr.p_type == PT_LOAD) {
-      mem.copy(hdr.p_vaddr, image_.data() + hdr.p_offset, hdr.p_filesz);
+      mem.copy(hdr.p_vaddr, elf_image_ + hdr.p_offset, hdr.p_filesz);
 
       if (hdr.p_memsz > hdr.p_filesz) {
         mem.memset(hdr.p_vaddr + hdr.p_filesz, 0, hdr.p_memsz - hdr.p_filesz);

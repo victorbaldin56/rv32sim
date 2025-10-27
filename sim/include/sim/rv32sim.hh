@@ -27,10 +27,12 @@ class Simulator final {
   Simulator(const std::vector<std::string>& cmd);
   void run();
 
+  auto getLogger() const noexcept { return logger_; }
+
   class RVException : public std::runtime_error {
    public:
     RVException(std::string_view what, Addr pc)
-        : std::runtime_error(std::format("{} at pc = {}", what, pc)) {}
+        : std::runtime_error(std::format("{} at pc = 0x{:x}", what, pc)) {}
   };
 
   class IllegalInstruction : public RVException {

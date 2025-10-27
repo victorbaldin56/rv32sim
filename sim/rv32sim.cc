@@ -31,6 +31,8 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
   loadElf(elf_path);
   createExecutionEnvironment(cmd);
   rv32i::registerInstructions(instructions_registry_);
+
+  logger_->info("Starting simulation...");
 }
 
 void Simulator::run() {

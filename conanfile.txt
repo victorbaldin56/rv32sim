@@ -1,5 +1,5 @@
 [requires]
-boost/1.83.0
+boost/1.86.0
 elfutils/0.190
 spdlog/1.16.0
 

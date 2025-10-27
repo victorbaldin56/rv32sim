@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <string>
 
-#include "base/scoped_mmap.hh"
+#include "base/mmaped_file.hh"
 #include "gelf.h"
 #include "memory.hh"
 
@@ -27,7 +27,8 @@ class ElfLoader final {
   };
 
  private:
-  ScopedMmap image_;
+  MmapedFile mmaped_elf_;
+  std::uint8_t* elf_image_;
   Elf32_Ehdr elf_header_;
   Byte* program_headers_start_;
 
