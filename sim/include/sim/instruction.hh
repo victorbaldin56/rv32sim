@@ -16,8 +16,6 @@ namespace rv32 {
 
 class IInstruction {
  public:
-  enum class ExecutionResult { kOk, kExit };
-
   virtual ExecutionResult execute(SimulatorState& sim,
                                   const Operands& ops) const = 0;
   virtual constexpr std::string_view getName() const noexcept = 0;

@@ -10,16 +10,18 @@
 namespace rv32 {
 
 enum class OperandKind : std::size_t {
-  kRd,
-  kRs1,
-  kRs2,
+  kRD,
+  kRS1,
+  kRS2,
   kImmI,
   kImmS,
   kImmB,
   kImmU,
   kImmJ,
 
-  kNumOperands
+  kNumOperands,
+
+  kShamt  // some fucking specific case
 };
 
 using Operands = std::tuple<RegNum,      // rd
@@ -64,6 +66,15 @@ constexpr Operands extractOperands(RawInstruction r) noexcept {
 };
 
 template <OperandKind kind>
+struct RegNumGetter {
+  static_assert(OperandKind::kRD <= kind && kind <= OperandKind::kRS2);
+
+  static RegNum get(const SimulatorState&, const Operands& operands) noexcept {
+    return std::get<helpers::underlying(kind)>(operands);
+  }
+};
+
+template <OperandKind kind>
 struct ImmGetter {
   static_assert(OperandKind::kImmI <= kind && kind <= OperandKind::kImmJ);
 
@@ -72,12 +83,12 @@ struct ImmGetter {
   }
 };
 
-template <OperandKind kind>
-struct RegNumGetter {
-  static_assert(OperandKind::kRd <= kind && kind <= OperandKind::kRs2);
-
-  static RegNum get(const SimulatorState&, const Operands& operands) noexcept {
-    return std::get<helpers::underlying(kind)>(operands);
+// again: this is a special case
+template <>
+struct ImmGetter<OperandKind::kShamt> {
+  static Word get(const SimulatorState& state,
+                  const Operands& operands) noexcept {
+    return RegNumGetter<OperandKind::kRS2>::get(state, operands);
   }
 };
 
@@ -86,6 +97,12 @@ struct RegValueGetter {
   static Word get(const SimulatorState& state,
                   const Operands& operands) noexcept {
     return state.rf.get(RegNumGetter<kind>::get(state, operands));
+  }
+};
+
+struct PCValueGetter {
+  static Addr get(const SimulatorState& state, const Operands&) noexcept {
+    return state.pc.get();
   }
 };
 }  // namespace rv32

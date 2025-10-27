@@ -19,11 +19,12 @@ class BasicInstruction : public IInstruction {
 template <typename Op, typename... ValueGetters>
 class ArithInstruction : public BasicInstruction<Op> {
  public:
-  IInstruction::ExecutionResult execute(
-      SimulatorState& state, const Operands& operands) const override {
-    state.rf.set(RegNumGetter<OperandKind::kRd>::get(state, operands),
+  ExecutionResult execute(SimulatorState& state,
+                          const Operands& operands) const override {
+    state.rf.set(RegNumGetter<OperandKind::kRD>::get(state, operands),
                  Op::eval(ValueGetters::get(state, operands)...));
-    return IInstruction::ExecutionResult::kOk;
+    ++state.pc;
+    return ExecutionResult::kOk;
   }
 };
 }  // namespace rv32

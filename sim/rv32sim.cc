@@ -25,10 +25,10 @@ Simulator::Simulator(const std::vector<std::string>& cmd) {
 }
 
 void Simulator::run() {
-  IInstruction::ExecutionResult res;
+  ExecutionResult res;
 
   do {
-    RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc);
+    RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc.get());
     const IInstruction* inst = instructions_registry_.get(raw);
     if (inst == nullptr) {
       throw IllegalInstruction();
@@ -36,7 +36,9 @@ void Simulator::run() {
 
     const Operands operands = extractOperands(raw);
     res = inst->execute(state_, operands);
-  } while (res != IInstruction::ExecutionResult::kExit);
+    if (res == ExecutionResult::kMisalignment) {
+    }
+  } while (res != ExecutionResult::kExit);
 }
 
 void Simulator::createExecutionEnvironment(
