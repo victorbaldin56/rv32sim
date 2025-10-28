@@ -10,11 +10,10 @@ class JalInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
-    ProgramCounter current_pc = state.pc++;
+    Addr next_pc = state.pc.getNext();
     ExecutionResult res =
-        current_pc.set(Op::getNextPC(ValueGetters::get(state, operands)...));
-    state.rf.set(RegNumGetter<OperandKind::kRD>::get(state, operands),
-                 state.pc.get());
+        state.pc.set(Op::getNextPC(ValueGetters::get(state, operands)...));
+    state.rf.set(RegNumGetter<OperandKind::kRD>::get(state, operands), next_pc);
     return res;
   }
 };
@@ -26,7 +25,7 @@ struct OpJal {
   static Addr getNextPC(Addr pc, Word offset) noexcept { return pc + offset; }
 };
 
-using Jal = JalInstruction<OpJal, PCValueGetter, ImmGetter<OperandKind::kImmI>>;
+using Jal = JalInstruction<OpJal, PCValueGetter, ImmGetter<OperandKind::kImmJ>>;
 
 struct OpJalr {
   static constexpr std::string_view kName = "jalr";

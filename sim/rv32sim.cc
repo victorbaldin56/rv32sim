@@ -36,17 +36,18 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
 }
 
 void Simulator::run() {
-  ExecutionResult res;
-
   while (true) {
     RawInstruction raw = state_.mem.get<RawInstruction>(state_.pc.get());
     const IInstruction* inst = instructions_registry_.get(raw);
     if (inst == nullptr) {
-      throw IllegalInstruction(state_.pc.get());
+      throw IllegalInstruction(raw, state_.pc.get());
     }
 
     const Operands operands = extractOperands(raw);
-    res = inst->execute(state_, operands);
+    SPDLOG_LOGGER_TRACE(logger_, "PC: 0x{:x}, instruction: {}, {}",
+                        state_.pc.get(), inst->getName(), operands.toText());
+
+    ExecutionResult res = inst->execute(state_, operands);
     if (res == ExecutionResult::kOk) {
       continue;
     }
@@ -67,7 +68,7 @@ void Simulator::createExecutionEnvironment(
   sp -= (sizeof(Addr) * (argc + 1) +
          sizeof(Word));  // to store argc and argv pointers
 
-  assert(bits::isAligned(sp, config::kStackAlignment));
+  sp = bits::alignDown(sp, config::kStackAlignment);
   state_.rf.set(helpers::underlying(RegisterFile::Register::kSP),
                 sp);  // at this point SP will be at program start
 

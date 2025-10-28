@@ -10,6 +10,7 @@
 #include <stdexcept>
 #include <string>
 
+#include "base/logger.hh"
 #include "base/mmaped_file.hh"
 #include "gelf.h"
 #include "memory.hh"
@@ -32,7 +33,9 @@ class ElfLoader final {
   MmapedFile mmaped_elf_;
   std::uint8_t* elf_image_;
   Elf32_Ehdr elf_header_;
-  Byte* program_headers_start_;
+  std::uint8_t* program_headers_start_;
+
+  std::shared_ptr<spdlog::logger> logger_;
 
   void checkElfHeader() const;
 };

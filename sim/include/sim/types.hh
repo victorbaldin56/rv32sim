@@ -13,6 +13,7 @@ namespace rv32 {
 
 using Addr = std::uint32_t;
 using Size = std::uint32_t;
+using SSize = std::make_signed_t<Size>;
 
 using Byte = std::uint8_t;
 using Half = std::uint16_t;
@@ -24,6 +25,6 @@ using SignedWord = std::make_signed_t<Word>;
 
 using RawInstruction = std::uint32_t;
 
-using Immediate = std::int32_t;
+using Immediate = std::uint32_t;
 using RegNum = std::uint32_t;
 }  // namespace rv32

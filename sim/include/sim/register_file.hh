@@ -7,9 +7,12 @@
 #pragma once
 
 #include <array>
+#include <string>
 
 #include "base/helpers.hh"
+#include "boost/algorithm/string.hpp"
 #include "config.hh"
+#include "magic_enum/magic_enum.hpp"
 #include "memory.hh"
 
 namespace rv32 {
@@ -34,17 +37,35 @@ class RegisterFile {
   };
   // clang-format on
 
+  static auto getRegName(Register num) noexcept {
+    auto name = magic_enum::enum_name(num);
+
+    // a price of codestyle...
+    std::string transformed_name(name.substr(1));
+    return boost::algorithm::to_lower_copy(transformed_name);
+  }
+
+  static auto getRegName(std::size_t num) noexcept {
+    return getRegName(static_cast<Register>(num));
+  }
+
   Word get(std::size_t num) const noexcept { return regs_[num]; }
   Word get(Register num) const noexcept {
     return get(helpers::underlying(num));
   }
 
-  void set(std::size_t num, Word value) noexcept { regs_[num] = value; }
+  void set(std::size_t num, Word value) noexcept {
+    if (num == helpers::underlying(Register::kZero)) {
+      return;
+    }
+    regs_[num] = value;
+  }
+
   void set(Register num, Word value) noexcept {
-    regs_[helpers::underlying(num)] = value;
+    return set(helpers::underlying(num), value);
   }
 
  private:
-  std::array<Word, helpers::underlying(Register::kNumRegisters)> regs_;
+  std::array<Word, helpers::underlying(Register::kNumRegisters)> regs_ = {};
 };
 }  // namespace rv32

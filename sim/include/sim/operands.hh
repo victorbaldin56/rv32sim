@@ -1,5 +1,6 @@
 #pragma once
 
+#include <format>
 #include <tuple>
 
 #include "base/bit_utils.hh"
@@ -24,62 +25,96 @@ enum class OperandKind : std::size_t {
   kShamt  // some fucking specific case
 };
 
-using Operands = std::tuple<RegNum,      // rd
-                            RegNum,      // rs1
-                            RegNum,      // rs2
-                            Immediate,   // imm_i
-                            Immediate,   // imm_s
-                            Immediate,   // imm_b
-                            Immediate,   // imm_u
-                            Immediate>;  // imm_j
+class Operands final {
+ public:
+  template <typename... Args>
+  constexpr Operands(Args&&... args) noexcept
+      : tuple_(std::make_tuple(std::forward<Args>(args)...)) {}
 
-static_assert(std::tuple_size_v<Operands> ==
-              helpers::underlying(OperandKind::kNumOperands));
+  template <OperandKind Kind>
+  constexpr auto get() const noexcept {
+    return std::get<helpers::underlying(Kind)>(tuple_);
+  }
 
-constexpr Operands extractOperands(RawInstruction r) noexcept {
-  return {// rd:
-          bits::extractBits(r, 7, 11),
-          // rs1:
-          bits::extractBits(r, 15, 19),
-          // rs2:
-          bits::extractBits(r, 20, 24),
-          // imm_i:
-          bits::signExtend(bits::extractBits(r, 12, 20), 11),
-          // imm_s:
-          bits::signExtend(
-              bits::extractBits(r, 7, 11) | (bits::extractBits(r, 25, 31) << 5),
-              11),
-          // imm_b:
-          bits::signExtend((bits::extractBits(r, 8, 11) << 1) |
-                               (bits::extractBits(r, 25, 30) << 5) |
-                               (bits::extractBits(r, 7, 7) << 11) |
-                               (bits::extractBits(r, 31, 31) << 12),
-                           12),
-          // imm_u:
-          bits::signExtend(bits::extractBits(r, 12, 31) << 12, 31),
-          // imm_j:
-          bits::signExtend((bits::extractBits(r, 21, 30) << 1) |
-                               (bits::extractBits(r, 20, 20) << 11) |
-                               (bits::extractBits(r, 12, 19) << 12) |
-                               (bits::extractBits(r, 31, 31) << 20),
-                           20)};
+  constexpr auto toText() const noexcept {
+    using enum OperandKind;
+
+    // clang-format off
+    return std::format(
+        "RD: {}, RS1: {}, RS2: {}, IMMI: 0x{:x}, IMMS: 0x{:x}, "
+        "IMMB: 0x{:x}, IMMU: 0x{:x}, IMMJ: 0x{:x}",
+        RegisterFile::getRegName(get<kRD>()),
+        RegisterFile::getRegName(get<kRS1>()),
+        RegisterFile::getRegName(get<kRS2>()),
+        get<kImmI>(),
+        get<kImmS>(),
+        get<kImmB>(),
+        get<kImmU>(),
+        get<kImmJ>());
+    // clang-format on
+  }
+
+ private:
+  using OperandsTuple = std::tuple<RegNum,      // rd
+                                   RegNum,      // rs1
+                                   RegNum,      // rs2
+                                   Immediate,   // imm_i
+                                   Immediate,   // imm_s
+                                   Immediate,   // imm_b
+                                   Immediate,   // imm_u
+                                   Immediate>;  // imm_j
+
+  static_assert(std::tuple_size_v<OperandsTuple> ==
+                helpers::underlying(OperandKind::kNumOperands));
+
+  OperandsTuple tuple_;
 };
 
-template <OperandKind kind>
+constexpr Operands extractOperands(RawInstruction r) noexcept {
+  return Operands(
+      // rd:
+      bits::extractBits(r, 7, 11),
+      // rs1:
+      bits::extractBits(r, 15, 19),
+      // rs2:
+      bits::extractBits(r, 20, 24),
+      // imm_i:
+      bits::signExtend(bits::extractBits(r, 20, 31), 12),
+      // imm_s:
+      bits::signExtend(
+          bits::extractBits(r, 7, 11) | (bits::extractBits(r, 25, 31) << 5),
+          12),
+      // imm_b:
+      bits::signExtend((bits::extractBits(r, 8, 11) << 1) |
+                           (bits::extractBits(r, 25, 30) << 5) |
+                           (bits::extractBits(r, 7, 7) << 11) |
+                           (bits::extractBits(r, 31, 31) << 12),
+                       13),
+      // imm_u:
+      bits::extractBits(r, 12, 31) << 12,
+      // imm_j:
+      bits::signExtend((bits::extractBits(r, 21, 30) << 1) |
+                           (bits::extractBits(r, 20, 20) << 11) |
+                           (bits::extractBits(r, 12, 19) << 12) |
+                           (bits::extractBits(r, 31, 31) << 20),
+                       21));
+};
+
+template <OperandKind Kind>
 struct RegNumGetter {
-  static_assert(OperandKind::kRD <= kind && kind <= OperandKind::kRS2);
+  static_assert(OperandKind::kRD <= Kind && Kind <= OperandKind::kRS2);
 
   static RegNum get(const SimulatorState&, const Operands& operands) noexcept {
-    return std::get<helpers::underlying(kind)>(operands);
+    return operands.get<Kind>();
   }
 };
 
-template <OperandKind kind>
+template <OperandKind Kind>
 struct ImmGetter {
-  static_assert(OperandKind::kImmI <= kind && kind <= OperandKind::kImmJ);
+  static_assert(OperandKind::kImmI <= Kind && Kind <= OperandKind::kImmJ);
 
   static Word get(const SimulatorState&, const Operands& operands) noexcept {
-    return std::get<helpers::underlying(kind)>(operands);
+    return operands.get<Kind>();
   }
 };
 
@@ -92,11 +127,11 @@ struct ImmGetter<OperandKind::kShamt> {
   }
 };
 
-template <OperandKind kind>
+template <OperandKind Kind>
 struct RegValueGetter {
   static Word get(const SimulatorState& state,
                   const Operands& operands) noexcept {
-    return state.rf.get(RegNumGetter<kind>::get(state, operands));
+    return state.rf.get(RegNumGetter<Kind>::get(state, operands));
   }
 };
 

@@ -11,11 +11,13 @@
 namespace rv32 {
 
 UniqueMmap MmapedFile::mmapWholeFile(const UniqueFD& fd,
-                                     const std::filesystem::path& path) {
+                                     const std::filesystem::path& path,
+                                     int open_flags, void* addr, int prot,
+                                     int mmap_flags, off_t offset) {
   std::size_t sz = getFileStats(fd, path).st_size;
 
   try {
-    return makeUniqueMmap(nullptr, sz, PROT_READ, MAP_PRIVATE, fd.get(), 0);
+    return makeUniqueMmap(addr, sz, prot, mmap_flags, fd.get(), offset);
   } catch (MmapError& e) {
     throw Error(produceSyscallErrorMessage(
         "mmap", "file", path.string()));  // more concrete report

@@ -13,6 +13,7 @@ class ProgramCounter final {
   static constexpr std::size_t kInstructionAlignment = 4;
 
   Addr get() const noexcept { return pc_; }
+  Addr getNext() const noexcept { return pc_ + sizeof(RawInstruction); }
   ExecutionResult set(Addr ja) {
     pc_ = ja;
     return bits::isAligned(pc_, kInstructionAlignment)
@@ -21,13 +22,13 @@ class ProgramCounter final {
   }
 
   ProgramCounter& operator++() noexcept {
-    pc_ += sizeof(RawInstruction);
+    pc_ = getNext();
     return *this;
   }
 
   ProgramCounter operator++(int) noexcept {
     ProgramCounter p = *this;
-    pc_ += sizeof(RawInstruction);
+    pc_ = getNext();
     return p;
   }
 
@@ -42,7 +43,7 @@ struct SimulatorState {
 
   static ExecutionResult ecall(SimulatorState& state);
 
-  enum class Syscall {
+  enum class Syscall : Word {
     kRead = 63,
     kWrite = 64,
     kExit = 93,

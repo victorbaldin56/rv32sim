@@ -74,7 +74,9 @@ class MmapedFile final {
   MmapedFile(const std::filesystem::path& path, int open_flags = O_RDONLY,
              void* addr = nullptr, int prot = PROT_READ,
              int mmap_flags = MAP_PRIVATE, off_t offset = 0)
-      : fd_(makeUniqueFD(path, open_flags)), mmap_(mmapWholeFile(fd_, path)) {}
+      : fd_(makeUniqueFD(path, open_flags)),
+        mmap_(mmapWholeFile(fd_, path, open_flags, addr, prot, mmap_flags,
+                            offset)) {}
 
   void* data() noexcept { return mmap_.get(); }
   const void* data() const noexcept { return mmap_.get(); }
@@ -91,7 +93,8 @@ class MmapedFile final {
 
   static UniqueMmap mmapWholeFile(
       const UniqueFD& fd,
-      const std::filesystem::path& path);  // path for error reporting
+      const std::filesystem::path& path,  // path for error reporting
+      int open_flags, void* addr, int prot, int mmap_flags, off_t offset);
   static struct stat getFileStats(const UniqueFD& fd,
                                   const std::filesystem::path& path);
 };

@@ -12,13 +12,10 @@
 #include <string>
 #include <vector>
 
+#include "base/logger.hh"
 #include "memory.hh"
 #include "register_file.hh"
 #include "sim/instructions_registry.hh"
-
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
 
 namespace rv32 {
 
@@ -37,7 +34,8 @@ class Simulator final {
 
   class IllegalInstruction : public RVException {
    public:
-    IllegalInstruction(Addr pc) : RVException("Illegal instruction", pc) {}
+    IllegalInstruction(RawInstruction raw, Addr pc)
+        : RVException(std::format("Illegal instruction 0x{:x}", raw), pc) {}
   };
 
  private:

@@ -8,7 +8,7 @@ namespace rv32::helpers {
 
 template <typename E>
 constexpr typename std::underlying_type<E>::type underlying(E e) noexcept {
-  return static_cast<typename std::underlying_type<E>::type>(e);
+  return static_cast<typename std::underlying_type_t<E>>(e);
 }
 
 // some magic to make variant type from some variable length template

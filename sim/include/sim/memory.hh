@@ -55,16 +55,18 @@ class Memory final {
   }
 
   // TODO: error handling
-  ssize_t read(int fd, Addr buf, Size count) {
+  SSize read(int fd, Addr buf, Size count) {
     assert(buf + count <= mem_.size());
     return ::read(fd, &mem_[buf], count);
   }
 
   // TODO: error handling
-  ssize_t write(int fd, Addr buf, Size count) const {
+  SSize write(int fd, Addr buf, Size count) const {
     assert(buf + count <= mem_.size());
     return ::write(fd, &mem_[buf], count);
   }
+
+  std::size_t size() const noexcept { return mem_.size(); }
 
  private:
   std::vector<Byte, boost::noinit_adaptor<std::allocator<Byte>>> mem_;
