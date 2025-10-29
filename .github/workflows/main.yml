@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         build_type: [debug, release]
-    container: victorbaldin56/linux_dev:15c8dd4c7030dd5867e3de2f1a30c2234fe32548
+    container: victorbaldin56/linux_dev:a51a343886c34b73ddf5344e72ce095c416af046
 
     steps:
     - name: Checkout
