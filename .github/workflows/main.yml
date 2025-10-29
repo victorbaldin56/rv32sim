@@ -1,0 +1,34 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [debug, release]
+    container: victorbaldin56/linux_dev:15c8dd4c7030dd5867e3de2f1a30c2234fe32548
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install project deps
+      run: |
+        conan install . \
+          -pr=conan_profiles/${{ matrix.build_type }}.profile \
+          --output-folder=build \
+          --build=missing
+
+    - name: Configure
+      run: cmake --preset conan-${{ matrix.build_type }}
+
+    - name: Build
+      run: cmake --build build -j
