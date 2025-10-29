@@ -1,7 +1,6 @@
-include(default)
+include(common)
 
 [settings]
-compiler.cppstd=gnu20
 build_type=Debug
 
 [conf]

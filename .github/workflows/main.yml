@@ -23,7 +23,7 @@ jobs:
     - name: Install project deps
       run: |
         conan install . \
-          -pr=conan_profiles/${{ matrix.build_type }}.profile \
+          -pr:a=conan_profiles/${{ matrix.build_type }} \
           --output-folder=build \
           --build=missing
 

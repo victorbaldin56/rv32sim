@@ -6,13 +6,14 @@
 
 #pragma once
 
+#include <elf.h>
+
 #include <filesystem>
 #include <stdexcept>
 #include <string>
 
 #include "base/logger.hh"
 #include "base/mmaped_file.hh"
-#include "gelf.h"
 #include "memory.hh"
 
 namespace rv32 {
