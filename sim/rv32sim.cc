@@ -23,8 +23,9 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
     : logger_(spdlog::stderr_color_mt("Simulator")) {
   logger_->set_level(
       static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
-  std::string argv_log_string =
-      std::accumulate(cmd.begin(), cmd.end(), "command line: "s);
+  std::string argv_log_string = std::accumulate(
+      cmd.begin(), cmd.end(), "command line: "s,
+      [](auto sum, const auto& cur) { return sum + " " + cur; });
   SPDLOG_LOGGER_TRACE(logger_, "{}", argv_log_string);
 
   std::filesystem::path elf_path = cmd.front();
@@ -100,10 +101,12 @@ ExecutionResult SimulatorState::ecall(SimulatorState& state) {
     case Syscall::kRead:
       state.rf.set(kA0, state.mem.read(std::bit_cast<int>(state.rf.get(kA0)),
                                        state.rf.get(kA1), state.rf.get(kA2)));
+      ++state.pc;
       return ExecutionResult::kOk;
     case Syscall::kWrite:
       state.rf.set(kA0, state.mem.write(std::bit_cast<int>(state.rf.get(kA0)),
                                         state.rf.get(kA1), state.rf.get(kA2)));
+      ++state.pc;
       return ExecutionResult::kOk;
     case Syscall::kExit:
       return ExecutionResult::kExit;

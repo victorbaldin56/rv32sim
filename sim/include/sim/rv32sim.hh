@@ -25,6 +25,11 @@ class Simulator final {
   void run();
 
   auto getLogger() const noexcept { return logger_; }
+  int getExitCode() const noexcept {
+    int exit_code = state_.rf.get(RegisterFile::Register::kA0);
+    logger_->info("Program exited with code {}", exit_code);
+    return exit_code;
+  }
 
   class RVException : public std::runtime_error {
    public:

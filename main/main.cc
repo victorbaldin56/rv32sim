@@ -58,6 +58,7 @@ int main(int argc, char** argv) try {
       sim.getLogger()->error("{}", e.what());
       return EXIT_FAILURE;
     }
+    return sim.getExitCode();
   }
 
   return 0;

@@ -71,6 +71,7 @@ class Memory final {
  private:
   std::vector<Byte, boost::noinit_adaptor<std::allocator<Byte>>> mem_;
 
-  static constexpr Size kAddressSpaceSize = std::numeric_limits<Addr>::max();
+  static constexpr Size kAddressSpaceSize =
+      0x80000000;  // we dont need 4 GB because in absence of kernel space.
 };
 }  // namespace rv32

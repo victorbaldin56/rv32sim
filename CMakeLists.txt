@@ -6,23 +6,15 @@ find_package(elfutils REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(magic_enum REQUIRED)
 
+include(CTest)
+
 add_subdirectory(base)
 add_subdirectory(sim)
 add_subdirectory(main)
 
-include(CTest)
+option(ENABLE_TESTING ON "Enable testing")
+if (ENABLE_TESTING)
+  enable_testing()
 
-set(TESTS_PATH ${CMAKE_SOURCE_DIR}/riscv-interpreter-task)
-
-add_custom_target(tests ALL
-  COMMAND make -j
-  COMMENT "Building external tests"
-  WORKING_DIRECTORY ${TESTS_PATH}
-)
-
-# Add test that runs the tests with your interpreter
-add_test(
-  NAME run_tests
-  COMMAND make test INTERPRETER=$<TARGET_FILE:rv32sim> -j
-  WORKING_DIRECTORY ${TESTS_PATH}
-)
+  add_subdirectory(tests)
+endif()

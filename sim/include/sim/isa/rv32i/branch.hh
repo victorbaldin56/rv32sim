@@ -79,7 +79,7 @@ struct OpBgeu {
   static constexpr ExtendedOpcode kExtendedOpcode =
       Opcode3(RawOpcode::kBranch, 0x7);
 
-  static bool compare(Word lhs, Word rhs) noexcept { return lhs > rhs; }
+  static bool compare(Word lhs, Word rhs) noexcept { return lhs >= rhs; }
 };
 
 using Bgeu = BranchInstruction<OpBgeu>;
