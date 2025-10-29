@@ -1,17 +1,8 @@
 #pragma once
 
-#include "sim/unimplemented_instruction.hh"
+#include "sim/instruction_templates.hh"
 
 namespace rv32::rv32i {
-
-template <typename Op>
-class SystemInstruction : public BasicInstruction<Op> {
- public:
-  ExecutionResult execute(SimulatorState& state,
-                          const Operands& operands) const override {
-    return Op::execute(state);
-  }
-};
 
 struct OpEcall {
   static constexpr std::string_view kName = "ecall";

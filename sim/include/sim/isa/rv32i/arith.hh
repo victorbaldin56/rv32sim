@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sim/arith_instruction.hh"
+#include "sim/instruction_templates.hh"
 #include "sim/opcodes.hh"
 
 namespace rv32::rv32i {

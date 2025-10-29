@@ -1,27 +1,9 @@
 #pragma once
 
-#include "sim/basic_instruction.hh"
+#include "sim/instruction_templates.hh"
 #include "sim/operands.hh"
 
 namespace rv32::rv32i {
-
-template <typename Op>
-class LoadInstruction : public BasicInstruction<Op> {
- public:
-  ExecutionResult execute(SimulatorState& state,
-                          const Operands& operands) const override {
-    using Result = Op::Result;
-
-    Addr base = RegValueGetter<OperandKind::kRS1>::get(state, operands);
-    Immediate offset = ImmGetter<OperandKind::kImmI>::get(state, operands);
-
-    Result val = state.mem.get<Result>(base + offset);
-    RegNum rd = RegNumGetter<OperandKind::kRD>::get(state, operands);
-    state.rf.set(rd, val);
-    ++state.pc;
-    return ExecutionResult::kOk;
-  }
-};
 
 struct OpLb {
   static constexpr std::string_view kName = "lb";

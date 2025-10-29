@@ -1,24 +1,9 @@
 #pragma once
 
-#include "sim/basic_instruction.hh"
+#include "sim/instruction_templates.hh"
 #include "sim/operands.hh"
 
 namespace rv32::rv32i {
-
-template <typename Op>
-class BranchInstruction final : public BasicInstruction<Op> {
- public:
-  ExecutionResult execute(SimulatorState& state,
-                          const Operands& operands) const override {
-    if (Op::compare(RegValueGetter<OperandKind::kRS1>::get(state, operands),
-                    RegValueGetter<OperandKind::kRS2>::get(state, operands))) {
-      return state.pc.set(state.pc.get() +
-                          ImmGetter<OperandKind::kImmB>::get(state, operands));
-    }
-    ++state.pc;
-    return ExecutionResult::kOk;
-  }
-};
 
 struct OpBeq {
   static constexpr std::string_view kName = "beq";

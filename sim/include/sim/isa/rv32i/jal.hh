@@ -1,22 +1,9 @@
 #pragma once
 
-#include "sim/basic_instruction.hh"
+#include "sim/instruction_templates.hh"
 #include "sim/operands.hh"
 
 namespace rv32::rv32i {
-
-template <typename Op, typename... ValueGetters>
-class JalInstruction final : public BasicInstruction<Op> {
- public:
-  ExecutionResult execute(SimulatorState& state,
-                          const Operands& operands) const override {
-    Addr next_pc = state.pc.getNext();
-    ExecutionResult res =
-        state.pc.set(Op::getNextPC(ValueGetters::get(state, operands)...));
-    state.rf.set(RegNumGetter<OperandKind::kRD>::get(state, operands), next_pc);
-    return res;
-  }
-};
 
 struct OpJal {
   static constexpr std::string_view kName = "jal";

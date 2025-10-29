@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sim/unimplemented_instruction.hh"
+#include "sim/instruction_templates.hh"
 
 namespace rv32::rv32i {
 
