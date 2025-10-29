@@ -83,12 +83,12 @@ void Simulator::createExecutionEnvironment(
   state_.mem.emit(sp, argc);
   sp += sizeof(Word);
 
-  for (const auto& arg : cmd) {
+  std::for_each(cmd.cbegin(), cmd.cend(), [&](const auto& arg) {
     state_.mem.copy(arg_string_addr, arg.c_str(), arg.size());
     state_.mem.emit(sp, arg_string_addr);
     sp += sizeof(Addr);
     arg_string_addr += arg.size();
-  }
+  });
 
   state_.mem.emit(sp, static_cast<Addr>(0));  // argv[argc] = nullptr
 }
