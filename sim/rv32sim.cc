@@ -20,13 +20,11 @@ namespace rv32 {
 using namespace std::string_literals;
 
 Simulator::Simulator(const std::vector<std::string>& cmd)
-    : logger_(spdlog::stderr_color_mt("Simulator")) {
-  logger_->set_level(
-      static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
+    : logger_(spdlog::get("Simulator")) {
   std::string argv_log_string = std::accumulate(
       cmd.begin(), cmd.end(), "command line: "s,
       [](auto sum, const auto& cur) { return sum + " " + cur; });
-  SPDLOG_LOGGER_TRACE(logger_, "{}", argv_log_string);
+  logger_->trace("{}", argv_log_string);
 
   std::filesystem::path elf_path = cmd.front();
   loadElf(elf_path);
@@ -45,8 +43,8 @@ void Simulator::run() {
     }
 
     const Operands operands = extractOperands(raw);
-    SPDLOG_LOGGER_TRACE(logger_, "PC: 0x{:x}, instruction: {}, {}",
-                        state_.pc.get(), inst->getName(), operands.toText());
+    logger_->trace("PC: 0x{:x}, instruction: {}, {}", state_.pc.get(),
+                   inst->getName(), operands.toText());
 
     ExecutionResult res = inst->execute(state_, operands);
     if (res == ExecutionResult::kOk) {

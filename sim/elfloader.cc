@@ -11,10 +11,7 @@ namespace rv32 {
 ElfLoader::ElfLoader(const std::filesystem::path& path)
     : mmaped_elf_(path),
       elf_image_(static_cast<std::uint8_t*>(mmaped_elf_.data())),
-      logger_(spdlog::stderr_color_mt("ElfLoader")) {
-  logger_->set_level(
-      static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
-
+      logger_(spdlog::get("ElfLoader")) {
   if (mmaped_elf_.size() < sizeof(elf_header_)) {
     throw Error("File too short");
   }
@@ -27,9 +24,8 @@ ElfLoader::ElfLoader(const std::filesystem::path& path)
     throw Error("File too short");
   }
   program_headers_start_ = elf_image_ + elf_header_.e_phoff;
-  SPDLOG_LOGGER_TRACE(logger_,
-                      "Parsed ELF: program headers table starts at 0x{:x}",
-                      elf_header_.e_phoff);
+  logger_->trace("Parsed ELF: program headers table starts at 0x{:x}",
+                 elf_header_.e_phoff);
 }
 
 void ElfLoader::load(Memory& mem) const {
@@ -40,10 +36,10 @@ void ElfLoader::load(Memory& mem) const {
     std::memcpy(&hdr, phdr, sizeof(hdr));
 
     if (hdr.p_type == PT_LOAD) {
-      SPDLOG_LOGGER_TRACE(logger_,
-                          "Loading section #{}, p_vaddr: "
-                          "0x{:x}, p_filesz: 0x{:x}, p_memsz: 0x{:x}",
-                          i, hdr.p_vaddr, hdr.p_filesz, hdr.p_memsz);
+      logger_->trace(
+          "Loading section #{}, p_vaddr: "
+          "0x{:x}, p_filesz: 0x{:x}, p_memsz: 0x{:x}",
+          i, hdr.p_vaddr, hdr.p_filesz, hdr.p_memsz);
 
       if (hdr.p_vaddr + hdr.p_filesz > mem.size()) {
         throw Error(
