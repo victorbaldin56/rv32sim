@@ -56,7 +56,16 @@ void Simulator::run() {
       break;
     }
 
-    throw RVException("", state_.pc.get());  // FIXME
+    throwException(res);
+  }
+}
+
+void Simulator::throwException [[noreturn]] (ExecutionResult res) {
+  switch (res) {
+    case ExecutionResult::kMisalignment:
+      throw Exception("Misaligned instruction", state_.pc.get());
+    default:
+      assert(0 && "Unreachable");
   }
 }
 
@@ -111,7 +120,7 @@ ExecutionResult SimulatorState::ecall(SimulatorState& state) {
     case Syscall::kExit:
       return ExecutionResult::kExit;
     default:
-      throw Simulator::RVException(
+      throw Simulator::Exception(
           std::format("Unimplemented syscall {}", syscall), state.pc.get());
   }
 }

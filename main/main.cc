@@ -54,7 +54,7 @@ int main(int argc, char** argv) try {
     rv32::Simulator sim(cmd);
     try {
       sim.run();
-    } catch (rv32::Simulator::RVException& e) {
+    } catch (rv32::Simulator::Exception& e) {
       sim.getLogger()->error("{}", e.what());
       return EXIT_FAILURE;
     }

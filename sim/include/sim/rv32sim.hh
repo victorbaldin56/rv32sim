@@ -31,16 +31,16 @@ class Simulator final {
     return exit_code;
   }
 
-  class RVException : public std::runtime_error {
+  class Exception : public std::runtime_error {
    public:
-    RVException(std::string_view what, Addr pc)
+    Exception(std::string_view what, Addr pc)
         : std::runtime_error(std::format("{} at pc = 0x{:x}", what, pc)) {}
   };
 
-  class IllegalInstruction : public RVException {
+  class IllegalInstruction : public Exception {
    public:
     IllegalInstruction(RawInstruction raw, Addr pc)
-        : RVException(std::format("Illegal instruction 0x{:x}", raw), pc) {}
+        : Exception(std::format("Illegal instruction 0x{:x}", raw), pc) {}
   };
 
  private:
@@ -50,5 +50,6 @@ class Simulator final {
 
   void loadElf(const std::filesystem::path& path);
   void createExecutionEnvironment(const std::vector<std::string>& cmd);
+  void throwException [[noreturn]] (ExecutionResult res);
 };
 }  // namespace rv32
