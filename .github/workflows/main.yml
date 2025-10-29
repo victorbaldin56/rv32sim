@@ -22,6 +22,7 @@ jobs:
 
     - name: Install project deps
       run: |
+        conan profile detect --force && \
         conan install . \
           -pr:a=conan_profiles/${{ matrix.build_type }} \
           --output-folder=build \
