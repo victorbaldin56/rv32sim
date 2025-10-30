@@ -1,15 +1,20 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// RAII file mapping.
+
 #pragma once
 
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
+#include <boost/scope/unique_fd.hpp>
+#include <boost/scope/unique_resource.hpp>
 #include <cstring>
 #include <filesystem>
 #include <format>
-
-#include "boost/scope/unique_fd.hpp"
-#include "boost/scope/unique_resource.hpp"
 
 namespace rv32 {
 

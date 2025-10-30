@@ -7,12 +7,12 @@
 #pragma once
 
 #include <array>
+#include <boost/algorithm/string.hpp>
+#include <magic_enum/magic_enum.hpp>
 #include <string>
 
 #include "base/helpers.hh"
-#include "boost/algorithm/string.hpp"
 #include "config.hh"
-#include "magic_enum/magic_enum.hpp"
 #include "memory.hh"
 
 namespace rv32 {

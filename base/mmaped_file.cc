@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// RAII file mapping.
+
 #include <fcntl.h>
 #include <sys/mman.h>
 #include <sys/stat.h>

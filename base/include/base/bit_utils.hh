@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Common bit manipulation.
+
 #pragma once
 
 #include <bit>

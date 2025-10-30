@@ -8,6 +8,7 @@
 
 #include <unistd.h>
 
+#include <boost/core/noinit_adaptor.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -17,7 +18,6 @@
 #include <type_traits>
 #include <vector>
 
-#include "boost/core/noinit_adaptor.hpp"
 #include "types.hh"
 
 namespace rv32 {

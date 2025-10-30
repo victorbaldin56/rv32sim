@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Simulator state.
+
 #pragma once
 
 #include "base/bit_utils.hh"

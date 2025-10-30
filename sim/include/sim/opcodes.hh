@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Opcode manipulation.
+
 #pragma once
 
 #include <cstdint>

@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Work with registry to add RV32I set.
+
 #pragma once
 
 #include "arith.hh"

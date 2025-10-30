@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Concrete instuction types for specialization.
+
 #pragma once
 
 #include "instruction.hh"

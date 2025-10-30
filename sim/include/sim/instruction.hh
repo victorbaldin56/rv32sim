@@ -2,7 +2,7 @@
 
 // rv32sim - a simple rv32 simulator
 //
-// TODO
+// Abstract instruction.
 
 #pragma once
 

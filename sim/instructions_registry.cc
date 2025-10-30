@@ -1,3 +1,9 @@
+// See LICENSE for license details.
+
+// rv32sim - a simple rv32 simulator
+//
+// Registry for storing RISCV instruction handles.
+
 #include "sim/instructions_registry.hh"
 
 namespace rv32 {
