@@ -6,36 +6,53 @@
 
 #include "sim/elfloader.hh"
 
-#include "base/scoped_mmap.hh"
-
 namespace rv32 {
 
-ElfLoader::ElfLoader(const std::filesystem::path& path) : image_(path) {
-  if (image_.size() < sizeof(elf_header_)) {
+ElfLoader::ElfLoader(const std::filesystem::path& path)
+    : mmaped_elf_(path),
+      elf_image_(static_cast<std::uint8_t*>(mmaped_elf_.data())),
+      logger_(spdlog::get("ElfLoader")) {
+  if (mmaped_elf_.size() < sizeof(elf_header_)) {
     throw Error("File too short");
   }
 
-  std::memcpy(&elf_header_, image_.data(), sizeof(elf_header_));
+  std::memcpy(&elf_header_, elf_image_, sizeof(elf_header_));
   checkElfHeader();
 
-  if (image_.size() <
-      elf_header_.e_phoff + elf_header_.e_phnum * sizeof(Elf32_Phdr)) {
+  if (mmaped_elf_.size() <
+      elf_header_.e_phoff + elf_header_.e_phnum * elf_header_.e_phentsize) {
     throw Error("File too short");
   }
-  program_headers_start_ = image_.data() + elf_header_.e_shoff;
+  program_headers_start_ = elf_image_ + elf_header_.e_phoff;
+  logger_->trace("Parsed ELF: program headers table starts at 0x{:x}",
+                 elf_header_.e_phoff);
 }
 
 void ElfLoader::load(Memory& mem) const {
-  Byte* phdr = program_headers_start_;
+  std::uint8_t* phdr = program_headers_start_;
   for (std::size_t i = 0; i < elf_header_.e_phnum;
-       ++i, phdr += sizeof(Elf32_Phdr)) {  // considering strict aliasing
+       ++i, phdr += elf_header_.e_phentsize) {  // considering strict aliasing
     Elf32_Phdr hdr;
     std::memcpy(&hdr, phdr, sizeof(hdr));
 
     if (hdr.p_type == PT_LOAD) {
-      mem.copy(hdr.p_vaddr, image_.data() + hdr.p_offset, hdr.p_filesz);
+      logger_->trace(
+          "Loading section #{}, p_vaddr: "
+          "0x{:x}, p_filesz: 0x{:x}, p_memsz: 0x{:x}",
+          i, hdr.p_vaddr, hdr.p_filesz, hdr.p_memsz);
+
+      if (hdr.p_vaddr + hdr.p_filesz > mem.size()) {
+        throw Error(
+            std::format("Cannot load section at offset 0x{:x}: section too big",
+                        hdr.p_offset));
+      }
+      mem.copy(hdr.p_vaddr, elf_image_ + hdr.p_offset, hdr.p_filesz);
 
       if (hdr.p_memsz > hdr.p_filesz) {
+        if (hdr.p_vaddr + hdr.p_memsz > mem.size()) {
+          throw Error(std::format("Cannot memset at offset {:x}: size to big",
+                                  hdr.p_offset));
+        }
         mem.memset(hdr.p_vaddr + hdr.p_filesz, 0, hdr.p_memsz - hdr.p_filesz);
       }
     }
@@ -44,7 +61,7 @@ void ElfLoader::load(Memory& mem) const {
 }
 
 void ElfLoader::checkElfHeader() const {
-  if (std::memcmp(elf_header_.e_ident + EI_MAG0, ELFMAG, SELFMAG) != 0) {
+  if (std::memcmp(&elf_header_.e_ident[EI_MAG0], ELFMAG, SELFMAG) != 0) {
     throw Error("Not an ELF file");
   }
 

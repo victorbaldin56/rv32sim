@@ -6,6 +6,9 @@
 
 #pragma once
 
+#include <unistd.h>
+
+#include <boost/core/noinit_adaptor.hpp>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -51,9 +54,24 @@ class Memory final {
     return value;
   }
 
- private:
-  std::vector<Byte> mem_;
+  // TODO: error handling
+  SSize read(int fd, Addr buf, Size count) {
+    assert(buf + count <= mem_.size());
+    return ::read(fd, &mem_[buf], count);
+  }
 
-  static constexpr Size kAddressSpaceSize = std::numeric_limits<Addr>::max();
+  // TODO: error handling
+  SSize write(int fd, Addr buf, Size count) const {
+    assert(buf + count <= mem_.size());
+    return ::write(fd, &mem_[buf], count);
+  }
+
+  std::size_t size() const noexcept { return mem_.size(); }
+
+ private:
+  std::vector<Byte, boost::noinit_adaptor<std::allocator<Byte>>> mem_;
+
+  static constexpr Size kAddressSpaceSize =
+      0x80000000;  // we dont need 4 GB because in absence of kernel space.
 };
 }  // namespace rv32

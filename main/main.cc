@@ -4,21 +4,32 @@
 //
 // Main function.
 
+#include <boost/algorithm/string.hpp>
+#include <boost/program_options.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "boost/program_options.hpp"
 #include "sim/rv32sim.hh"
 
 namespace po = boost::program_options;
+
+namespace {
+
+void help(char** argv, const po::options_description& desc) {
+  std::cout << "Usage: " << argv[0] << " ./user-binary [user-binary-options]\n";
+  std::cout << desc << std::endl;
+}
+}  // namespace
 
 int main(int argc, char** argv) try {
   po::options_description desc("Options");
   // clang-format off
   desc.add_options()
     ("help,h", "Print help message and exit")
+    ("trace", po::value<std::string>(),
+              "Enable trace messages, see available tracers")
     ("args", po::value<std::vector<std::string>>()->multitoken(),
              "User command line to execute: --args <program> [args...]");
   // clang-format on
@@ -28,19 +39,44 @@ int main(int argc, char** argv) try {
 
   po::variables_map vm;
   po::command_line_parser cmdp(argc, argv);
-  po::store(cmdp.options(desc).positional(p).run(), vm);
+  try {
+    po::store(cmdp.options(desc).positional(p).run(), vm);
+  } catch (po::error& e) {
+    std::cerr << e.what() << std::endl;
+    help(argv, desc);
+    return EXIT_FAILURE;
+  }
 
-  if (vm.count("help")) {
-    std::cout << "Usage: " << argv[0]
-              << " ./user-binary [user-binary-options]\n";
-    std::cout << desc << std::endl;
+  if (argc == 1 || vm.count("help")) {
+    help(argv, desc);
     return 0;
   }
 
   if (vm.count("args")) {
+    auto simulator_logger = spdlog::stderr_color_mt("Simulator");
+    auto elf_loader_logger = spdlog::stderr_color_mt("ElfLoader");
+
+    // use global registry to access all loggers
+    if (vm.count("trace")) {
+      std::vector<std::string> logger_names;
+      boost::algorithm::split(logger_names, vm["trace"].as<std::string>(),
+                              boost::is_any_of(","));
+      std::for_each(
+          logger_names.begin(), logger_names.end(), [](const auto& name) {
+            spdlog::get(name)->set_level(spdlog::level::level_enum::trace);
+          });
+    }
+
     auto cmd = vm["args"].as<std::vector<std::string>>();
     rv32::Simulator sim(cmd);
-    sim.run();
+
+    try {
+      sim.run();
+    } catch (rv32::Simulator::Exception& e) {
+      sim.getLogger()->error("{}", e.what());
+      return EXIT_FAILURE;
+    }
+    return sim.getExitCode();
   }
 
   return 0;

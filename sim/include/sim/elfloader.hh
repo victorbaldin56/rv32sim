@@ -6,12 +6,14 @@
 
 #pragma once
 
+#include <elf.h>
+
 #include <filesystem>
 #include <stdexcept>
 #include <string>
 
-#include "base/scoped_mmap.hh"
-#include "gelf.h"
+#include "base/logger.hh"
+#include "base/mmaped_file.hh"
 #include "memory.hh"
 
 namespace rv32 {
@@ -21,15 +23,20 @@ class ElfLoader final {
   ElfLoader(const std::filesystem::path& path);
   void load(Memory& mem) const;
 
+  Addr getEntryPC() const noexcept { return elf_header_.e_entry; }
+
   class Error : public std::runtime_error {
    public:
     using std::runtime_error::runtime_error;
   };
 
  private:
-  ScopedMmap image_;
+  MmapedFile mmaped_elf_;
+  std::uint8_t* elf_image_;
   Elf32_Ehdr elf_header_;
-  Byte* program_headers_start_;
+  std::uint8_t* program_headers_start_;
+
+  std::shared_ptr<spdlog::logger> logger_;
 
   void checkElfHeader() const;
 };

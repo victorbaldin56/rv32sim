@@ -7,15 +7,24 @@
 #pragma once
 
 #include <cstdint>
+#include <type_traits>
 
 namespace rv32 {
 
 using Addr = std::uint32_t;
 using Size = std::uint32_t;
+using SSize = std::make_signed_t<Size>;
 
 using Byte = std::uint8_t;
-using HalfWord = std::uint16_t;
+using Half = std::uint16_t;
 using Word = std::uint32_t;
 
+using SignedByte = std::make_signed_t<Byte>;
+using SignedHalf = std::make_signed_t<Half>;
+using SignedWord = std::make_signed_t<Word>;
+
 using RawInstruction = std::uint32_t;
+
+using Immediate = std::uint32_t;
+using RegNum = std::uint32_t;
 }  // namespace rv32

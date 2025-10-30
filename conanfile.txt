@@ -1,6 +1,7 @@
 [requires]
-boost/1.83.0
-elfutils/0.190
+boost/1.86.0
+magic_enum/0.9.7
+spdlog/1.16.0
 
 [generators]
 CMakeDeps
