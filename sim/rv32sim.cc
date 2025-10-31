@@ -13,6 +13,7 @@
 #include "sim/elfloader.hh"
 #include "sim/instruction.hh"
 #include "sim/isa/rv32i/rv32i.hh"
+#include "sim/isa/rv32im/rv32im.hh"
 #include "sim/operands.hh"
 
 namespace rv32 {
@@ -29,7 +30,9 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
   std::filesystem::path elf_path = cmd.front();
   loadElf(elf_path);
   createExecutionEnvironment(cmd);
+
   rv32i::registerInstructions(instructions_registry_);
+  rv32im::registerInstructions(instructions_registry_);
 
   logger_->info("Starting simulation...");
 }
