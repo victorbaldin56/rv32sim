@@ -12,9 +12,8 @@ void InstructionsRegistry::add(std::unique_ptr<IInstruction> inst) {
   using namespace std::string_literals;
 
   ExtendedOpcode ext_opcode = inst->getExtendedOpcode();
+  auto name = inst->getName();
   if (!tryAddInstruction(ext_opcode, inst)) {
-    // instruction still owned here if not added
-    auto name = inst->getName();
     throw Error("Failed to add instruction \""s + std::string(name) +
                 "\": already exists"s);
   }

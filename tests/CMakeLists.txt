@@ -3,6 +3,8 @@ set(TASK_TEST_LIST
   exit_code_argv/runner.sh
   rv32i/test_add
   rv32i/test_sub
+  rv32im/test_mul
+  rv32im/test_div
 )
 
 set(INTERPRETER $<TARGET_FILE:rv32sim>)
