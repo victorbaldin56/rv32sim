@@ -90,7 +90,8 @@ class StoreInstruction final : public BasicInstruction<Op> {
     Addr base = RegValueGetter<OperandKind::kRS1>::get(state, operands);
     Immediate offset = ImmGetter<OperandKind::kImmS>::get(state, operands);
 
-    Emitted val = RegValueGetter<OperandKind::kRS2>::get(state, operands);
+    Emitted val =
+        RegValueGetter<OperandKind::kRS2, Emitted>::get(state, operands);
     state.mem.emit(base + offset, val);
     ++state.pc;
     return ExecutionResult::kOk;
