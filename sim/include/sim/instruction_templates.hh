@@ -87,7 +87,8 @@ class StoreInstruction final : public BasicInstruction<Op> {
                           const Operands& operands) const override {
     using Emitted = Op::Emitted;
 
-    Addr base = RegValueGetter<OperandKind::kRS1>::get(state, operands);
+    Addr base = std::bit_cast<Addr>(
+        RegValueGetter<OperandKind::kRS1>::get(state, operands));
     Immediate offset = ImmGetter<OperandKind::kImmS>::get(state, operands);
 
     Emitted val = RegValueGetter<OperandKind::kRS2>::get(state, operands);
