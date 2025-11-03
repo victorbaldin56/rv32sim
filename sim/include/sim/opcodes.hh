@@ -29,6 +29,10 @@ enum class RawOpcode : std::uint8_t {
   kJalr = 0x67,
   kJal = 0x6f,
   kSystem = 0x73,
+
+  kLoadFp = 0x07,
+  kStoreFp = 0x27,
+  kOpFp = 0x53,
 };
 
 template <typename Opcode>
