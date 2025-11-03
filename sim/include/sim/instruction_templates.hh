@@ -63,7 +63,7 @@ class JalInstruction final : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class LoadInstruction : public BasicInstruction<Op> {
+class LoadInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -81,7 +81,7 @@ class LoadInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class StoreInstruction : public BasicInstruction<Op> {
+class StoreInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -98,7 +98,7 @@ class StoreInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class SystemInstruction : public BasicInstruction<Op> {
+class SystemInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -107,7 +107,7 @@ class SystemInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class UnimplementedInstruction : public BasicInstruction<Op> {
+class UnimplementedInstruction final : public BasicInstruction<Op> {
  public:
   class Exception : public std::runtime_error {
    public:
