@@ -113,7 +113,7 @@ constexpr Operands extractOperands(RawInstruction r) noexcept {
 
 template <OperandKind Kind>
 struct RegNumGetter {
-  static_assert(OperandKind::kRD <= Kind && Kind <= OperandKind::kRS2);
+  static_assert(OperandKind::kRD <= Kind && Kind <= OperandKind::kRS3);
 
   static RegNum get(const SimulatorState&, const Operands& operands) noexcept {
     return operands.get<Kind>();

@@ -92,15 +92,16 @@ class Opcode37 : public Opcode3 {
   const RawInstruction funct7_;
 };
 
-class Opcode5 : public Opcode {
+class Opcode35 : public Opcode3 {
  public:
-  constexpr Opcode5(RawOpcode opcode, std::uint8_t funct5) noexcept
-      : Opcode(opcode), funct5_(funct5) {}
-  constexpr Opcode5(RawInstruction raw) noexcept
-      : Opcode(raw), funct5_(bits::extractBits(raw, 27, 31)) {}
+  constexpr Opcode35(RawOpcode opcode, std::uint8_t funct3,
+                     std::uint8_t funct5) noexcept
+      : Opcode3(opcode, funct3), funct5_(funct5) {}
+  constexpr Opcode35(RawInstruction raw) noexcept
+      : Opcode3(raw), funct5_(bits::extractBits(raw, 27, 31)) {}
 
   constexpr operator RawInstruction() const noexcept {
-    return Opcode::operator RawInstruction() | (funct5_ << 27);
+    return Opcode3::operator RawInstruction() | (funct5_ << 27);
   }
 
  private:
@@ -108,7 +109,7 @@ class Opcode5 : public Opcode {
 };
 
 using ExtendedOpcodeTuple =
-    std::tuple<Opcode, Opcode3, Opcode37, RawInstruction>;
+    std::tuple<Opcode, Opcode3, Opcode37, Opcode35, RawInstruction>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
 class ExtendedOpcodesCreator final {
