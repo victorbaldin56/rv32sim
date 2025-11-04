@@ -14,6 +14,13 @@
 namespace rv32::rv32imf {
 
 inline void registerInstructions(InstructionsRegistry& registry) {
+  // op-fp
   registry.add(std::make_unique<Fadd>());
+  registry.add(std::make_unique<Fsub>());
+  registry.add(std::make_unique<Fmul>());
+  registry.add(std::make_unique<Fdiv>());
+  registry.add(std::make_unique<Fmax>());
+  registry.add(std::make_unique<Fmin>());
+  registry.add(std::make_unique<Fsqrt>());
 }
 }
