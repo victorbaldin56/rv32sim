@@ -44,7 +44,7 @@ struct ExtendedOpcodeHash {
 
 class Opcode {
  public:
-  constexpr Opcode(RawOpcode opcode)
+  constexpr Opcode(RawOpcode opcode) noexcept
       : opcode_(static_cast<RawInstruction>(opcode)) {}
   constexpr Opcode(RawInstruction raw) noexcept
       : opcode_(bits::extractBits(raw, 0, 6)) {}
@@ -57,7 +57,7 @@ class Opcode {
 
 class Opcode3 : public Opcode {
  public:
-  constexpr Opcode3(RawOpcode opcode, std::uint8_t funct3)
+  constexpr Opcode3(RawOpcode opcode, std::uint8_t funct3) noexcept
       : Opcode(opcode), funct3_(funct3) {}
   constexpr Opcode3(RawInstruction raw) noexcept
       : Opcode(raw), funct3_(bits::extractBits(raw, 12, 14)) {}
@@ -72,7 +72,8 @@ class Opcode3 : public Opcode {
 
 class Opcode37 : public Opcode3 {
  public:
-  constexpr Opcode37(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct7)
+  constexpr Opcode37(RawOpcode opcode, std::uint8_t funct3,
+                     std::uint8_t funct7) noexcept
       : Opcode3(opcode, funct3), funct7_(funct7) {}
   constexpr Opcode37(RawInstruction raw) noexcept
       : Opcode3(raw), funct7_(bits::extractBits(raw, 25, 31)) {}
@@ -85,13 +86,28 @@ class Opcode37 : public Opcode3 {
   const RawInstruction funct7_;
 };
 
+class Opcode5 : public Opcode {
+ public:
+  constexpr Opcode5(RawOpcode opcode, std::uint8_t funct5) noexcept
+      : Opcode(opcode), funct5_(funct5) {}
+  constexpr Opcode5(RawInstruction raw) noexcept
+      : Opcode(raw), funct5_(bits::extractBits(raw, 27, 31)) {}
+
+  constexpr operator RawInstruction() const noexcept {
+    return Opcode::operator RawInstruction() | (funct5_ << 27);
+  }
+
+ private:
+  const RawInstruction funct5_;
+};
+
 using ExtendedOpcodeTuple =
     std::tuple<Opcode, Opcode3, Opcode37, RawInstruction>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
-class ExtendedOpcodesCreator {
+class ExtendedOpcodesCreator final {
  public:
-  static constexpr ExtendedOpcodeTuple create(RawInstruction r) {
+  static constexpr ExtendedOpcodeTuple create(RawInstruction r) noexcept {
     return TupleFiller<ExtendedOpcodeTuple>::fill(r);
   }
 

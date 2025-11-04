@@ -6,10 +6,14 @@
 
 #pragma once
 
+#include "arith.hh"
+#include "load_fp.hh"
 #include "sim/instructions_registry.hh"
+#include "store_fp.hh"
 
 namespace rv32::rv32imf {
 
 inline void registerInstructions(InstructionsRegistry& registry) {
+  registry.add(std::make_unique<Fadd>());
 }
 }
