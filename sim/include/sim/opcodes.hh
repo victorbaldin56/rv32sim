@@ -18,6 +18,7 @@
 namespace rv32 {
 
 enum class RawOpcode : std::uint8_t {
+  // rv32im
   kLoad = 0x3,
   kMiscMem = 0xf,
   kOpImm = 0x13,
@@ -30,8 +31,13 @@ enum class RawOpcode : std::uint8_t {
   kJal = 0x6f,
   kSystem = 0x73,
 
+  // rv32imf
   kLoadFp = 0x07,
   kStoreFp = 0x27,
+  kMAdd = 0x43,
+  kMSub = 0x47,
+  kNMAdd = 0x4f,
+  kNMSub = 0x4b,
   kOpFp = 0x53,
 };
 

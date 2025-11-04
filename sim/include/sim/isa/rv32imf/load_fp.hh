@@ -16,4 +16,6 @@ struct OpFlw {
 
   using Result = float;
 };
+
+using Flw = LoadInstruction<OpFlw>;
 }

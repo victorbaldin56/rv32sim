@@ -10,4 +10,12 @@
 
 namespace rv32::rv32imf {
 
+struct OpFsw {
+  static constexpr std::string_view kName = "fsw";
+  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kStoreFp);
+
+  using Emitted = float;
+};
+
+using Fsw = StoreInstruction<OpFsw>;
 }

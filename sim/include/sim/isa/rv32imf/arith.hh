@@ -92,4 +92,64 @@ struct OpFsqrt {
 
 using Fsqrt =
     ArithInstruction<OpFsqrt, RegValueGetter<OperandKind::kRS1, float>>;
+
+struct OpFmadd {
+  static constexpr std::string_view kName = "fmadd";
+  static constexpr ExtendedOpcode kExtendedOpcode =
+      Opcode5(RawOpcode::kMAdd, 0x0);
+
+  static float eval(float rs1, float rs2, float rs3) noexcept {
+    return std::fma(rs1, rs2, rs3);
+  }
+};
+
+using Fmadd =
+    ArithInstruction<OpFmadd, RegValueGetter<OperandKind::kRS1, float>,
+                     RegValueGetter<OperandKind::kRS2, float>,
+                     RegValueGetter<OperandKind::kRS3, float>>;
+
+struct OpFmsub {
+  static constexpr std::string_view kName = "fmsub";
+  static constexpr ExtendedOpcode kExtendedOpcode =
+      Opcode5(RawOpcode::kMSub, 0x0);
+
+  static float eval(float rs1, float rs2, float rs3) noexcept {
+    return std::fma(rs1, rs2, -rs3);
+  }
+};
+
+using Fmsub =
+    ArithInstruction<OpFmsub, RegValueGetter<OperandKind::kRS1, float>,
+                     RegValueGetter<OperandKind::kRS2, float>,
+                     RegValueGetter<OperandKind::kRS3, float>>;
+
+struct OpFnmadd {
+  static constexpr std::string_view kName = "fnmadd";
+  static constexpr ExtendedOpcode kExtendedOpcode =
+      Opcode5(RawOpcode::kNMAdd, 0x0);
+
+  static float eval(float rs1, float rs2, float rs3) noexcept {
+    return std::fma(-rs1, rs2, rs3);
+  }
+};
+
+using Fnmadd =
+    ArithInstruction<OpFnmadd, RegValueGetter<OperandKind::kRS1, float>,
+                     RegValueGetter<OperandKind::kRS2, float>,
+                     RegValueGetter<OperandKind::kRS3, float>>;
+
+struct OpFnmsub {
+  static constexpr std::string_view kName = "fnmsub";
+  static constexpr ExtendedOpcode kExtendedOpcode =
+      Opcode5(RawOpcode::kNMSub, 0x0);
+
+  static float eval(float rs1, float rs2, float rs3) noexcept {
+    return std::fma(-rs1, rs2, -rs3);
+  }
+};
+
+using Fnmsub =
+    ArithInstruction<OpFnmsub, RegValueGetter<OperandKind::kRS1, float>,
+                     RegValueGetter<OperandKind::kRS2, float>,
+                     RegValueGetter<OperandKind::kRS3, float>>;
 }
