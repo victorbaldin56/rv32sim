@@ -92,6 +92,21 @@ class Opcode37 : public Opcode3 {
   const RawInstruction funct7_;
 };
 
+class Opcode5 : public Opcode {
+ public:
+  constexpr Opcode5(RawOpcode opcode, std::uint8_t funct5) noexcept
+      : Opcode(opcode), funct5_(funct5) {}
+  constexpr Opcode5(RawInstruction r) noexcept
+      : Opcode(r), funct5_(bits::extractBits(r, 27, 31)) {}
+
+  constexpr operator RawInstruction() const noexcept {
+    return Opcode::operator RawInstruction() | (funct5_ << 27);
+  }
+
+ private:
+  const RawInstruction funct5_;
+};
+
 class Opcode35 : public Opcode3 {
  public:
   constexpr Opcode35(RawOpcode opcode, std::uint8_t funct3,
@@ -108,8 +123,41 @@ class Opcode35 : public Opcode3 {
   const RawInstruction funct5_;
 };
 
+class Opcode5RS2 : public Opcode5 {
+ public:
+  constexpr Opcode5RS2(RawOpcode opcode, std::uint8_t funct5,
+                       std::uint8_t rs2) noexcept
+      : Opcode5(opcode, funct5), rs2_(rs2) {}
+  constexpr Opcode5RS2(RawInstruction raw) noexcept
+      : Opcode5(raw), rs2_(bits::extractBits(raw, 20, 24)) {}
+
+  constexpr operator RawInstruction() const noexcept {
+    return Opcode5::operator RawInstruction() | (rs2_ << 20);
+  }
+
+ private:
+  const RawInstruction rs2_;
+};
+
+class Opcode35RS2 : public Opcode5RS2 {
+ public:
+  constexpr Opcode35RS2(RawOpcode opcode, std::uint8_t funct3,
+                        std::uint8_t funct5, std::uint8_t rs2) noexcept
+      : Opcode5RS2(opcode, funct5, rs2), funct3_(funct3) {}
+  constexpr Opcode35RS2(RawInstruction raw) noexcept
+      : Opcode5RS2(raw), funct3_(bits::extractBits(raw, 12, 14)) {}
+
+  constexpr operator RawInstruction() const noexcept {
+    return Opcode5::operator RawInstruction() | (funct3_ << 12);
+  }
+
+ private:
+  const RawInstruction funct3_;
+};
+
 using ExtendedOpcodeTuple =
-    std::tuple<Opcode, Opcode3, Opcode37, Opcode35, RawInstruction>;
+    std::tuple<Opcode, Opcode3, Opcode5, Opcode37, Opcode35, Opcode5RS2,
+               Opcode35RS2, RawInstruction>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
 class ExtendedOpcodesCreator final {

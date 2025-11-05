@@ -26,6 +26,19 @@ inline void registerInstructions(InstructionsRegistry& registry) {
   registry.add(std::make_unique<Fmsub>());
   registry.add(std::make_unique<Fnmadd>());
   registry.add(std::make_unique<Fnmsub>());
+  registry.add(std::make_unique<Feq>());
+  registry.add(std::make_unique<Flt>());
+  registry.add(std::make_unique<Fle>());
+  registry.add(std::make_unique<Fmvxw>());
+  registry.add(std::make_unique<Fmvwx>());
+  registry.add(std::make_unique<Fcvtw>());
+  registry.add(std::make_unique<Fcvtwu>());
+  registry.add(std::make_unique<Fcvtsw>());
+  registry.add(std::make_unique<Fcvtswu>());
+  registry.add(std::make_unique<Fsgnj>());
+  registry.add(std::make_unique<Fsgnjn>());
+  registry.add(std::make_unique<Fsgnjx>());
+  registry.add(std::make_unique<Fclass>());
 
   // load
   registry.add(std::make_unique<Flw>());
