@@ -126,6 +126,10 @@ These instructions from [supported extensions](#supported-extensions) are curren
 * `ebreak`
 * `fence`
 
+## License
+
+This project is licensed after APACHE 2.0 license.
+
 ## Contribution
 
 This project is currently in active development. If you wish to contribute
