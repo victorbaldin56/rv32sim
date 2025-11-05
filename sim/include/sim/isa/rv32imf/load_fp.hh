@@ -12,7 +12,8 @@ namespace rv32::rv32imf {
 
 struct OpFlw {
   static constexpr std::string_view kName = "flw";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kLoadFp);
+  static inline const ExtendedOpcode extended_opcode =
+      Opcode(RawOpcode::kLoadFp);
 
   using Result = float;
 };

@@ -12,7 +12,7 @@ namespace rv32::rv32i {
 
 struct OpEcall {
   static constexpr std::string_view kName = "ecall";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       RawInstruction(0x00000000 | helpers::underlying(RawOpcode::kSystem));
 
   static ExecutionResult execute(SimulatorState& state) {
@@ -24,7 +24,7 @@ using Ecall = SystemInstruction<OpEcall>;
 
 struct OpEbreak {
   static constexpr std::string_view kName = "ebreak";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       RawInstruction(0x00100000 | helpers::underlying(RawOpcode::kSystem));
 };
 

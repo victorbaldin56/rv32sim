@@ -50,25 +50,27 @@ struct ExtendedOpcodeHash {
 
 class Opcode {
  public:
-  constexpr Opcode(RawOpcode opcode) noexcept
+  Opcode(RawOpcode opcode) noexcept
       : opcode_(static_cast<RawInstruction>(opcode)) {}
-  constexpr Opcode(RawInstruction raw) noexcept
-      : opcode_(bits::extractBits(raw, 0, 6)) {}
+  Opcode(RawInstruction raw) noexcept : opcode_(bits::extractBits(raw, 0, 6)) {}
 
-  constexpr operator RawInstruction() const noexcept { return opcode_; }
+  operator RawInstruction() const noexcept { return opcode_; }
+
+  // no virtual destructor : for sure we are not gonna use base pointers to
+  // delete derived classes
 
  private:
   const RawInstruction opcode_;
 };
 
-class Opcode3 : public Opcode {
+class Opcode3 : public virtual Opcode {
  public:
-  constexpr Opcode3(RawOpcode opcode, std::uint8_t funct3) noexcept
+  Opcode3(RawOpcode opcode, std::uint8_t funct3) noexcept
       : Opcode(opcode), funct3_(funct3) {}
-  constexpr Opcode3(RawInstruction raw) noexcept
+  Opcode3(RawInstruction raw) noexcept
       : Opcode(raw), funct3_(bits::extractBits(raw, 12, 14)) {}
 
-  constexpr operator RawInstruction() const noexcept {
+  operator RawInstruction() const noexcept {
     return Opcode::operator RawInstruction() | (funct3_ << 12);
   }
 
@@ -76,30 +78,14 @@ class Opcode3 : public Opcode {
   const RawInstruction funct3_;
 };
 
-class Opcode37 : public Opcode3 {
+class Opcode5 : public virtual Opcode {
  public:
-  constexpr Opcode37(RawOpcode opcode, std::uint8_t funct3,
-                     std::uint8_t funct7) noexcept
-      : Opcode3(opcode, funct3), funct7_(funct7) {}
-  constexpr Opcode37(RawInstruction raw) noexcept
-      : Opcode3(raw), funct7_(bits::extractBits(raw, 25, 31)) {}
-
-  constexpr operator RawInstruction() const noexcept {
-    return Opcode3::operator RawInstruction() | (funct7_ << 25);
-  }
-
- private:
-  const RawInstruction funct7_;
-};
-
-class Opcode5 : public Opcode {
- public:
-  constexpr Opcode5(RawOpcode opcode, std::uint8_t funct5) noexcept
+  Opcode5(RawOpcode opcode, std::uint8_t funct5) noexcept
       : Opcode(opcode), funct5_(funct5) {}
-  constexpr Opcode5(RawInstruction r) noexcept
+  Opcode5(RawInstruction r) noexcept
       : Opcode(r), funct5_(bits::extractBits(r, 27, 31)) {}
 
-  constexpr operator RawInstruction() const noexcept {
+  operator RawInstruction() const noexcept {
     return Opcode::operator RawInstruction() | (funct5_ << 27);
   }
 
@@ -107,31 +93,55 @@ class Opcode5 : public Opcode {
   const RawInstruction funct5_;
 };
 
-class Opcode35 : public Opcode3 {
+class Opcode7 : public virtual Opcode {
  public:
-  constexpr Opcode35(RawOpcode opcode, std::uint8_t funct3,
-                     std::uint8_t funct5) noexcept
-      : Opcode3(opcode, funct3), funct5_(funct5) {}
-  constexpr Opcode35(RawInstruction raw) noexcept
-      : Opcode3(raw), funct5_(bits::extractBits(raw, 27, 31)) {}
+  Opcode7(RawOpcode opcode, std::uint8_t funct7) noexcept
+      : Opcode(opcode), funct7_(funct7) {}
+  Opcode7(RawInstruction r) noexcept
+      : Opcode(r), funct7_(bits::extractBits(r, 25, 31)) {}
 
-  constexpr operator RawInstruction() const noexcept {
-    return Opcode3::operator RawInstruction() | (funct5_ << 27);
+  operator RawInstruction() const noexcept {
+    return Opcode::operator RawInstruction() | (funct7_ << 25);
   }
 
  private:
-  const RawInstruction funct5_;
+  const RawInstruction funct7_;
+};
+
+class Opcode35 : public Opcode3, public Opcode5 {
+ public:
+  Opcode35(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct5) noexcept
+      : Opcode(opcode), Opcode3(opcode, funct3), Opcode5(opcode, funct5) {}
+  Opcode35(RawInstruction raw) noexcept
+      : Opcode(raw), Opcode3(raw), Opcode5(raw) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode3::operator RawInstruction() |
+           Opcode5::operator RawInstruction();
+  }
+};
+
+class Opcode37 : public Opcode3, public Opcode7 {
+ public:
+  Opcode37(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct7) noexcept
+      : Opcode(opcode), Opcode3(opcode, funct3), Opcode7(opcode, funct7) {}
+  Opcode37(RawInstruction raw) noexcept
+      : Opcode(raw), Opcode3(raw), Opcode7(raw) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode3::operator RawInstruction() |
+           Opcode7::operator RawInstruction();
+  }
 };
 
 class Opcode5RS2 : public Opcode5 {
  public:
-  constexpr Opcode5RS2(RawOpcode opcode, std::uint8_t funct5,
-                       std::uint8_t rs2) noexcept
-      : Opcode5(opcode, funct5), rs2_(rs2) {}
-  constexpr Opcode5RS2(RawInstruction raw) noexcept
-      : Opcode5(raw), rs2_(bits::extractBits(raw, 20, 24)) {}
+  Opcode5RS2(RawOpcode opcode, std::uint8_t funct5, std::uint8_t rs2) noexcept
+      : Opcode(opcode), Opcode5(opcode, funct5), rs2_(rs2) {}
+  Opcode5RS2(RawInstruction raw) noexcept
+      : Opcode(raw), Opcode5(raw), rs2_(bits::extractBits(raw, 20, 24)) {}
 
-  constexpr operator RawInstruction() const noexcept {
+  operator RawInstruction() const noexcept {
     return Opcode5::operator RawInstruction() | (rs2_ << 20);
   }
 
@@ -139,20 +149,20 @@ class Opcode5RS2 : public Opcode5 {
   const RawInstruction rs2_;
 };
 
-class Opcode35RS2 : public Opcode5RS2 {
+class Opcode35RS2 : public Opcode3, public Opcode5RS2 {
  public:
-  constexpr Opcode35RS2(RawOpcode opcode, std::uint8_t funct3,
-                        std::uint8_t funct5, std::uint8_t rs2) noexcept
-      : Opcode5RS2(opcode, funct5, rs2), funct3_(funct3) {}
-  constexpr Opcode35RS2(RawInstruction raw) noexcept
-      : Opcode5RS2(raw), funct3_(bits::extractBits(raw, 12, 14)) {}
+  Opcode35RS2(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct5,
+              std::uint8_t rs2) noexcept
+      : Opcode(opcode),
+        Opcode3(opcode, funct3),
+        Opcode5RS2(opcode, funct5, rs2) {}
+  Opcode35RS2(RawInstruction raw) noexcept
+      : Opcode(raw), Opcode3(raw), Opcode5RS2(raw) {}
 
-  constexpr operator RawInstruction() const noexcept {
-    return Opcode5::operator RawInstruction() | (funct3_ << 12);
+  operator RawInstruction() const noexcept {
+    return Opcode3::operator RawInstruction() |
+           Opcode5RS2::operator RawInstruction();
   }
-
- private:
-  const RawInstruction funct3_;
 };
 
 using ExtendedOpcodeTuple =
@@ -162,7 +172,7 @@ using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
 class ExtendedOpcodesCreator final {
  public:
-  static constexpr ExtendedOpcodeTuple create(RawInstruction r) noexcept {
+  static ExtendedOpcodeTuple create(RawInstruction r) noexcept {
     return TupleFiller<ExtendedOpcodeTuple>::fill(r);
   }
 

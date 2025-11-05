@@ -17,8 +17,8 @@ class BasicInstruction : public IInstruction {
     return Op::kName;
   }
 
-  constexpr ExtendedOpcode getExtendedOpcode() const noexcept override {
-    return Op::kExtendedOpcode;
+  ExtendedOpcode getExtendedOpcode() const noexcept override {
+    return Op::extended_opcode;
   }
 };
 

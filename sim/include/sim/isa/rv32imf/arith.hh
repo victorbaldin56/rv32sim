@@ -14,7 +14,7 @@ namespace rv32::rv32imf {
 
 struct OpFadd {
   static constexpr std::string_view kName = "fadd.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5(RawOpcode::kOpFp, 0x0);
 
   static float eval(float rs1, float rs2) noexcept { return rs1 + rs2; }
@@ -25,7 +25,7 @@ using Fadd = ArithInstruction<OpFadd, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFsub {
   static constexpr std::string_view kName = "fsub.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5(RawOpcode::kOpFp, 0x1);
 
   static float eval(float rs1, float rs2) noexcept { return rs1 - rs2; }
@@ -36,7 +36,7 @@ using Fsub = ArithInstruction<OpFsub, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFmul {
   static constexpr std::string_view kName = "fmul.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5(RawOpcode::kOpFp, 0x2);
 
   static float eval(float rs1, float rs2) noexcept { return rs1 * rs2; }
@@ -47,7 +47,7 @@ using Fmul = ArithInstruction<OpFmul, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFdiv {
   static constexpr std::string_view kName = "fdiv.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5(RawOpcode::kOpFp, 0x3);
 
   static float eval(float rs1, float rs2) noexcept { return rs1 / rs2; }
@@ -58,7 +58,7 @@ using Fdiv = ArithInstruction<OpFdiv, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFmax {
   static constexpr std::string_view kName = "fmax.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x1, 0x5);
 
   static float eval(float rs1, float rs2) noexcept {
@@ -71,7 +71,7 @@ using Fmax = ArithInstruction<OpFmax, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFmin {
   static constexpr std::string_view kName = "fmin.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x0, 0x5);
 
   static float eval(float rs1, float rs2) noexcept {
@@ -84,7 +84,7 @@ using Fmin = ArithInstruction<OpFmin, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFsqrt {
   static constexpr std::string_view kName = "fsqrt.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5(RawOpcode::kOpFp, 0xb);
 
   static float eval(float rs1) noexcept { return std::sqrt(rs1); }
@@ -95,7 +95,7 @@ using Fsqrt =
 
 struct OpFmadd {
   static constexpr std::string_view kName = "fmadd.s";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kMAdd);
+  static inline const ExtendedOpcode extended_opcode = Opcode(RawOpcode::kMAdd);
 
   static float eval(float rs1, float rs2, float rs3) noexcept {
     return std::fma(rs1, rs2, rs3);
@@ -109,7 +109,7 @@ using Fmadd =
 
 struct OpFmsub {
   static constexpr std::string_view kName = "fmsub.s";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kMSub);
+  static inline const ExtendedOpcode extended_opcode = Opcode(RawOpcode::kMSub);
 
   static float eval(float rs1, float rs2, float rs3) noexcept {
     return std::fma(rs1, rs2, -rs3);
@@ -123,7 +123,8 @@ using Fmsub =
 
 struct OpFnmadd {
   static constexpr std::string_view kName = "fnmadd.s";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kNMAdd);
+  static inline const ExtendedOpcode extended_opcode =
+      Opcode(RawOpcode::kNMAdd);
 
   static float eval(float rs1, float rs2, float rs3) noexcept {
     return std::fma(-rs1, rs2, rs3);
@@ -137,7 +138,8 @@ using Fnmadd =
 
 struct OpFnmsub {
   static constexpr std::string_view kName = "fnmsub.s";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kNMSub);
+  static inline const ExtendedOpcode extended_opcode =
+      Opcode(RawOpcode::kNMSub);
 
   static float eval(float rs1, float rs2, float rs3) noexcept {
     return std::fma(-rs1, rs2, -rs3);
@@ -151,7 +153,7 @@ using Fnmsub =
 
 struct OpFeq {
   static constexpr std::string_view kName = "feq";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x2, 0x14);
 
   static Word eval(float rs1, float rs2) noexcept { return rs1 == rs2; }
@@ -162,7 +164,7 @@ using Feq = ArithInstruction<OpFeq, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFlt {
   static constexpr std::string_view kName = "flt";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x1, 0x14);
 
   static Word eval(float rs1, float rs2) noexcept { return rs1 < rs2; }
@@ -173,7 +175,7 @@ using Flt = ArithInstruction<OpFlt, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFle {
   static constexpr std::string_view kName = "fle";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x0, 0x14);
 
   static Word eval(float rs1, float rs2) noexcept { return rs1 <= rs2; }
@@ -184,7 +186,7 @@ using Fle = ArithInstruction<OpFle, RegValueGetter<OperandKind::kRS1, float>,
 
 struct OpFmvxw {
   static constexpr std::string_view kName = "fmv.x.w";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x0, 0x1c);
 
   static Word eval(float rs1) noexcept { return std::bit_cast<Word>(rs1); }
@@ -195,7 +197,7 @@ using Fmvxw =
 
 struct OpFmvwx {
   static constexpr std::string_view kName = "fmv.w.x";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x0, 0x1e);
 
   static float eval(Word rs1) noexcept { return std::bit_cast<float>(rs1); }
@@ -205,7 +207,7 @@ using Fmvwx = ArithInstruction<OpFmvwx, RegValueGetter<OperandKind::kRS1>>;
 
 struct OpFcvtw {
   static constexpr std::string_view kName = "fcvt.w.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5RS2(RawOpcode::kOpFp, 0x18, 0x0);
 
   static SignedWord eval(float rs1) noexcept { return std::lrint(rs1); }
@@ -216,7 +218,7 @@ using Fcvtw =
 
 struct OpFcvtwu {
   static constexpr std::string_view kName = "fcvt.wu.s";  // FIXME
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5RS2(RawOpcode::kOpFp, 0x18, 0x1);
 
   static Word eval(float rs1) noexcept { return std::lrint(rs1); }
@@ -227,7 +229,7 @@ using Fcvtwu =
 
 struct OpFcvtsw {
   static constexpr std::string_view kName = "fcvt.s.w";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5RS2(RawOpcode::kOpFp, 0x1a, 0x0);
 
   static float eval(SignedWord rs1) noexcept { return static_cast<float>(rs1); }
@@ -237,7 +239,7 @@ using Fcvtsw = ArithInstruction<OpFcvtsw, RegValueGetter<OperandKind::kRS1>>;
 
 struct OpFcvtswu {
   static constexpr std::string_view kName = "fcvt.s.wu";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode5RS2(RawOpcode::kOpFp, 0x1a, 0x1);
 
   static float eval(Word rs1) noexcept { return static_cast<float>(rs1); }
@@ -247,7 +249,7 @@ using Fcvtswu = ArithInstruction<OpFcvtswu, RegValueGetter<OperandKind::kRS1>>;
 
 struct OpFsgnj {
   static constexpr std::string_view kName = "fsgnj.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x0, 0x4);
 
   static float eval(float rs1, float rs2) noexcept {
@@ -265,7 +267,7 @@ using Fsgnj =
 
 struct OpFsgnjn {
   static constexpr std::string_view kName = "fsgnjn.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x1, 0x4);
 
   static float eval(float rs1, float rs2) noexcept {
@@ -283,7 +285,7 @@ using Fsgnjn =
 
 struct OpFsgnjx {
   static constexpr std::string_view kName = "fsgnjx.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35(RawOpcode::kOpFp, 0x2, 0x4);
 
   static float eval(float rs1, float rs2) noexcept {
@@ -301,7 +303,7 @@ using Fsgnjx =
 
 struct OpFclass {
   static constexpr std::string_view kName = "fclass.s";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode35RS2(RawOpcode::kOpFp, 0x1, 0x1c, 0x0);
 
   static std::uint32_t eval(float rs1) noexcept {
