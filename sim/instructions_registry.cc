@@ -9,14 +9,10 @@
 namespace rv32 {
 
 void InstructionsRegistry::add(std::unique_ptr<IInstruction> inst) {
-  using namespace std::string_literals;
+  assert(inst != nullptr);
 
   ExtendedOpcode ext_opcode = inst->getExtendedOpcode();
-  auto name = inst->getName();
-  if (!tryAddInstruction(ext_opcode, inst)) {
-    throw Error("Failed to add instruction \""s + std::string(name) +
-                "\": already exists"s);
-  }
+  addExtendedOpcode(ext_opcode, inst);
 }
 
 const IInstruction* InstructionsRegistry::get(
@@ -28,20 +24,26 @@ const IInstruction* InstructionsRegistry::get(
 }
 
 template <typename V>
-bool InstructionsRegistry::tryAddInstruction(
+void InstructionsRegistry::addExtendedOpcode(
     const V& ext_opcode, std::unique_ptr<IInstruction>& instruction) {
-  bool inserted = false;
+  assert(instruction != nullptr);
 
   std::visit(
       [&](const auto& key) {
+        using namespace std::string_literals;
+
         using KeyT = std::decay_t<decltype(key)>;
         auto& registry = std::get<Map<KeyT>>(maps_);
+        auto inst_name = instruction->getName();
         auto [it2, ins] = registry.emplace(key, std::move(instruction));
-        inserted = ins;
+        if (!ins) {
+          throw Error("Failed to add instruction \""s + std::string(inst_name) +
+                      "\": duplicates \""s +
+                      std::string(registry.find(key)->second->getName()) +
+                      "\"");
+        }
       },
       ext_opcode);
-
-  return inserted;
 }
 
 template <typename Tuple, std::size_t... Indexes>
