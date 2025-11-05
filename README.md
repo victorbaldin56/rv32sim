@@ -55,43 +55,43 @@ It is highly recommended to use pre-built Docker image.
 
 ### With Docker
 
-1. Clone the repo.
-
-```sh
-git clone https://github.com/victorbaldin56/rv32sim.git
-```
-
-Unless you need external submodule with tests from [@iDang3r](https://gitlab.com/iDang3r/),
-you don't have to care about submodules here. If you really want to get tests too then
-
-```sh
-git submodule update --init --recursive
-```
-
 1. Pull the pre-built Docker image and start the Docker container using it. Recommended command:
 
-```sh
-docker run --restart unless-stopped -it -v [YOUR_BACKUP_VOLUME_PATH]:/home/dev --name linux_dev victorbaldin56/linux_dev:a51a343886c34b73ddf5344e72ce095c416af046
-```
+   ```sh
+   docker run --restart unless-stopped -it -v [YOUR_BACKUP_VOLUME_PATH]:/home/dev --name linux_dev victorbaldin56/linux_dev:a51a343886c34b73ddf5344e72ce095c416af046
+   ```
+
+1. Clone the repo.
+
+   ```sh
+   git clone https://github.com/victorbaldin56/rv32sim.git
+   ```
+
+   Unless you need external submodule with tests from [@iDang3r](https://gitlab.com/iDang3r/),
+   you don't have to care about submodules here. If you really want to get tests too then
+
+   ```sh
+   git submodule update --init --recursive
+   ```
 
 1. Install additional project dependencies with Conan
 
-```sh
-conan profile detect --force
-conan install . --build=missing --output-folder=build -pr:a=conan_profiles/release
-```
+   ```sh
+   conan profile detect --force
+   conan install . --build=missing --output-folder=build -pr:a=conan_profiles/release
+   ```
 
 1. Configure the build
 
-```sh
-cmake --preset conan-release
-```
+   ```sh
+   cmake --preset conan-release
+   ```
 
 1. Build
 
-```sh
-cmake --build build -j
-```
+   ```sh
+   cmake --build build -j
+   ```
 
 ### Have no Docker yet?
 
