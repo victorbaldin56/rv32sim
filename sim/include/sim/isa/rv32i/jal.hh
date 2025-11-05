@@ -13,7 +13,7 @@ namespace rv32::rv32i {
 
 struct OpJal {
   static constexpr std::string_view kName = "jal";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kJal);
+  static inline const ExtendedOpcode extended_opcode = Opcode(RawOpcode::kJal);
 
   static Addr getNextPC(Addr pc, Word offset) noexcept { return pc + offset; }
 };
@@ -22,7 +22,7 @@ using Jal = JalInstruction<OpJal, PCValueGetter, ImmGetter<OperandKind::kImmJ>>;
 
 struct OpJalr {
   static constexpr std::string_view kName = "jalr";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode3(RawOpcode::kJalr, 0x0);
 
   static Addr getNextPC(Word rs1, Word offset) noexcept {

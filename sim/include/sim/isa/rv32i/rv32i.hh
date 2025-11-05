@@ -44,7 +44,7 @@ inline void registerInstructions(InstructionsRegistry& registry) {
   // jal
   registry.add(std::make_unique<Jal>());
 
-  /// jalr
+  // jalr
   registry.add(std::make_unique<Jalr>());
 
   // branch
@@ -62,15 +62,15 @@ inline void registerInstructions(InstructionsRegistry& registry) {
   registry.add(std::make_unique<Lbu>());
   registry.add(std::make_unique<Lhu>());
 
-  /// store
+  // store
   registry.add(std::make_unique<Sb>());
   registry.add(std::make_unique<Sh>());
   registry.add(std::make_unique<Sw>());
 
-  /// misc mem
+  // misc mem
   registry.add(std::make_unique<Fence>());
 
-  /// system
+  // system
   registry.add(std::make_unique<Ecall>());
   registry.add(std::make_unique<Ebreak>());
 }

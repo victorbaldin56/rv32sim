@@ -8,6 +8,7 @@
 
 #include <array>
 #include <boost/algorithm/string.hpp>
+#include <concepts>
 #include <magic_enum/magic_enum.hpp>
 #include <string>
 
@@ -37,6 +38,8 @@ class RegisterFile {
   };
   // clang-format on
 
+  static constexpr std::size_t kNumFpRegisters = 0x20;
+
   static auto getRegName(Register num) noexcept {
     auto name = magic_enum::enum_name(num);
 
@@ -49,23 +52,43 @@ class RegisterFile {
     return getRegName(static_cast<Register>(num));
   }
 
-  Word get(std::size_t num) const noexcept { return regs_[num]; }
-  Word get(Register num) const noexcept {
-    return get(helpers::underlying(num));
+  template <typename T>
+  T get(std::size_t num) const noexcept {
+    if constexpr (std::integral<T>) {
+      return regs_[num];
+    } else if constexpr (std::is_same_v<T, float>) {
+      return fp_regs_[num];
+    } else {
+      static_assert(false, "Unreachable");
+    }
   }
 
-  void set(std::size_t num, Word value) noexcept {
-    if (num == helpers::underlying(Register::kZero)) {
-      return;
+  Word get(Register num) const noexcept {
+    return get<Word>(helpers::underlying(num));
+  }
+
+  template <typename T>
+  void set(std::size_t num, T value) noexcept {
+    if constexpr (std::integral<T>) {
+      if (num == helpers::underlying(Register::kZero)) {
+        return;
+      }
+      regs_[num] = value;
+    } else if constexpr (std::is_same_v<T, float>) {
+      fp_regs_[num] = value;
+    } else {
+      static_assert(false, "Unreachable");
     }
-    regs_[num] = value;
   }
 
   void set(Register num, Word value) noexcept {
-    return set(helpers::underlying(num), value);
+    set(helpers::underlying(num), value);
   }
 
  private:
   std::array<Word, helpers::underlying(Register::kNumRegisters)> regs_ = {};
+
+  std::array<float, kNumFpRegisters> fp_regs_;
+  std::uint32_t fcsr_;
 };
 }  // namespace rv32

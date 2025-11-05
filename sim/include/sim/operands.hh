@@ -20,6 +20,7 @@ enum class OperandKind : std::size_t {
   kRD,
   kRS1,
   kRS2,
+  kRS3,
   kImmI,
   kImmS,
   kImmB,
@@ -47,11 +48,12 @@ class Operands final {
 
     // clang-format off
     return std::format(
-        "RD: {}, RS1: {}, RS2: {}, IMMI: 0x{:x}, IMMS: 0x{:x}, "
+        "RD: {}, RS1: {}, RS2: {}, RS3: {}, IMMI: 0x{:x}, IMMS: 0x{:x}, "
         "IMMB: 0x{:x}, IMMU: 0x{:x}, IMMJ: 0x{:x}",
         RegisterFile::getRegName(get<kRD>()),
         RegisterFile::getRegName(get<kRS1>()),
         RegisterFile::getRegName(get<kRS2>()),
+        RegisterFile::getRegName(get<kRS3>()),
         get<kImmI>(),
         get<kImmS>(),
         get<kImmB>(),
@@ -64,6 +66,7 @@ class Operands final {
   using OperandsTuple = std::tuple<RegNum,      // rd
                                    RegNum,      // rs1
                                    RegNum,      // rs2
+                                   RegNum,      // rs3
                                    Immediate,   // imm_i
                                    Immediate,   // imm_s
                                    Immediate,   // imm_b
@@ -84,6 +87,8 @@ constexpr Operands extractOperands(RawInstruction r) noexcept {
       bits::extractBits(r, 15, 19),
       // rs2:
       bits::extractBits(r, 20, 24),
+      // rs3:
+      bits::extractBits(r, 27, 31),
       // imm_i:
       bits::signExtend(bits::extractBits(r, 20, 31), 12),
       // imm_s:
@@ -108,7 +113,7 @@ constexpr Operands extractOperands(RawInstruction r) noexcept {
 
 template <OperandKind Kind>
 struct RegNumGetter {
-  static_assert(OperandKind::kRD <= Kind && Kind <= OperandKind::kRS2);
+  static_assert(OperandKind::kRD <= Kind && Kind <= OperandKind::kRS3);
 
   static RegNum get(const SimulatorState&, const Operands& operands) noexcept {
     return operands.get<Kind>();
@@ -133,11 +138,11 @@ struct ImmGetter<OperandKind::kShamt> {
   }
 };
 
-template <OperandKind Kind>
+template <OperandKind Kind, typename Res = Word>
 struct RegValueGetter {
-  static Word get(const SimulatorState& state,
-                  const Operands& operands) noexcept {
-    return state.rf.get(RegNumGetter<Kind>::get(state, operands));
+  static Res get(const SimulatorState& state,
+                 const Operands& operands) noexcept {
+    return state.rf.get<Res>(RegNumGetter<Kind>::get(state, operands));
   }
 };
 

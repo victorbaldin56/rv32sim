@@ -12,7 +12,8 @@ namespace rv32::rv32i {
 
 struct OpFence {
   static constexpr std::string_view kName = "fence";
-  static constexpr ExtendedOpcode kExtendedOpcode = Opcode(RawOpcode::kMiscMem);
+  static inline const ExtendedOpcode extended_opcode =
+      Opcode(RawOpcode::kMiscMem);
 };
 
 using Fence = UnimplementedInstruction<OpFence>;

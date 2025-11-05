@@ -12,7 +12,7 @@ namespace rv32::rv32im {
 
 struct OpMul {
   static constexpr std::string_view kName = "mul";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x0, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept { return rs1 * rs2; }
@@ -23,7 +23,7 @@ using Mul = ArithInstruction<OpMul, RegValueGetter<OperandKind::kRS1>,
 
 struct OpMulh {
   static constexpr std::string_view kName = "mulh";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x1, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
@@ -42,7 +42,7 @@ using Mulh = ArithInstruction<OpMulh, RegValueGetter<OperandKind::kRS1>,
 
 struct OpMulhsu {
   static constexpr std::string_view kName = "mulhsu";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x2, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
@@ -61,7 +61,7 @@ using Mulhsu = ArithInstruction<OpMulhsu, RegValueGetter<OperandKind::kRS1>,
 
 struct OpMulhu {
   static constexpr std::string_view kName = "mulhu";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x3, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {

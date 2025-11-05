@@ -17,8 +17,8 @@ class BasicInstruction : public IInstruction {
     return Op::kName;
   }
 
-  constexpr ExtendedOpcode getExtendedOpcode() const noexcept override {
-    return Op::kExtendedOpcode;
+  ExtendedOpcode getExtendedOpcode() const noexcept override {
+    return Op::extended_opcode;
   }
 };
 
@@ -63,7 +63,7 @@ class JalInstruction final : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class LoadInstruction : public BasicInstruction<Op> {
+class LoadInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -81,7 +81,7 @@ class LoadInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class StoreInstruction : public BasicInstruction<Op> {
+class StoreInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -90,7 +90,8 @@ class StoreInstruction : public BasicInstruction<Op> {
     Addr base = RegValueGetter<OperandKind::kRS1>::get(state, operands);
     Immediate offset = ImmGetter<OperandKind::kImmS>::get(state, operands);
 
-    Emitted val = RegValueGetter<OperandKind::kRS2>::get(state, operands);
+    Emitted val =
+        RegValueGetter<OperandKind::kRS2, Emitted>::get(state, operands);
     state.mem.emit(base + offset, val);
     ++state.pc;
     return ExecutionResult::kOk;
@@ -98,7 +99,7 @@ class StoreInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class SystemInstruction : public BasicInstruction<Op> {
+class SystemInstruction final : public BasicInstruction<Op> {
  public:
   ExecutionResult execute(SimulatorState& state,
                           const Operands& operands) const override {
@@ -107,7 +108,7 @@ class SystemInstruction : public BasicInstruction<Op> {
 };
 
 template <typename Op>
-class UnimplementedInstruction : public BasicInstruction<Op> {
+class UnimplementedInstruction final : public BasicInstruction<Op> {
  public:
   class Exception : public std::runtime_error {
    public:

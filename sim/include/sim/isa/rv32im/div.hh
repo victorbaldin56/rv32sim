@@ -12,7 +12,7 @@ namespace rv32::rv32im {
 
 struct OpDiv {
   static constexpr std::string_view kName = "div";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x4, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
@@ -28,7 +28,7 @@ using Div = ArithInstruction<OpDiv, RegValueGetter<OperandKind::kRS1>,
 
 struct OpDivu {
   static constexpr std::string_view kName = "divu";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x5, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
@@ -41,7 +41,7 @@ using Divu = ArithInstruction<OpDivu, RegValueGetter<OperandKind::kRS1>,
 
 struct OpRem {
   static constexpr std::string_view kName = "rem";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x6, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
@@ -57,7 +57,7 @@ using Rem = ArithInstruction<OpRem, RegValueGetter<OperandKind::kRS1>,
 
 struct OpRemu {
   static constexpr std::string_view kName = "divu";
-  static constexpr ExtendedOpcode kExtendedOpcode =
+  static inline const ExtendedOpcode extended_opcode =
       Opcode37(RawOpcode::kOp, 0x7, 0x1);
 
   static Word eval(Word rs1, Word rs2) noexcept {
