@@ -15,6 +15,7 @@
 #include "sim/isa/rv32i/rv32i.hh"
 #include "sim/isa/rv32im/rv32im.hh"
 #include "sim/isa/rv32imf/rv32imf.hh"
+#include "sim/isa/rv32imf_zbb/rv32imf_zbb.hh"
 #include "sim/operands.hh"
 
 namespace rv32 {
@@ -35,6 +36,7 @@ Simulator::Simulator(const std::vector<std::string>& cmd)
   rv32i::registerInstructions(instructions_registry_);
   rv32im::registerInstructions(instructions_registry_);
   rv32imf::registerInstructions(instructions_registry_);
+  rv32imf_zbb::registerInstructions(instructions_registry_);
 
   logger_->info("Starting simulation...");
 }

@@ -9,6 +9,10 @@ set(TASK_TEST_LIST
   rv32imf/test_fsub
   rv32imf/test_fmul
   rv32imf/test_fdiv
+  rv32imf_zbb/test_andn
+  rv32imf_zbb/test_or
+  rv32imf_zbb/test_xor
+  rv32imf_zbb/test_shift
 )
 
 set(INTERPRETER $<TARGET_FILE:rv32sim>)
