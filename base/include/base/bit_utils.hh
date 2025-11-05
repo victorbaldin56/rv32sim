@@ -36,7 +36,7 @@ constexpr T alignDown(T v, std::size_t alignment) noexcept {
 }
 
 template <typename T>
-constexpr T bitMask(unsigned width) {
+constexpr T bitMask(unsigned width = sizeof(T) * CHAR_BIT) {
   return (static_cast<T>(1) << width) - 1;
 }
 

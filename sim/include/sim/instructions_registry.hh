@@ -45,7 +45,7 @@ class InstructionsRegistry {
   Maps maps_;
 
   template <typename V>
-  bool tryAddInstruction(const V& ext_opcode,
+  void addExtendedOpcode(const V& ext_opcode,
                          std::unique_ptr<IInstruction>& instruction);
 
   template <typename Tuple, std::size_t... Indexes>

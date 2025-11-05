@@ -134,19 +134,31 @@ class Opcode37 : public Opcode3, public Opcode7 {
   }
 };
 
-class Opcode5RS2 : public Opcode5 {
+class OpcodeRS2 : public virtual Opcode {
  public:
-  Opcode5RS2(RawOpcode opcode, std::uint8_t funct5, std::uint8_t rs2) noexcept
-      : Opcode(opcode), Opcode5(opcode, funct5), rs2_(rs2) {}
-  Opcode5RS2(RawInstruction raw) noexcept
-      : Opcode(raw), Opcode5(raw), rs2_(bits::extractBits(raw, 20, 24)) {}
+  OpcodeRS2(RawOpcode opcode, std::uint8_t rs2) noexcept
+      : Opcode(opcode), rs2_(rs2) {}
+  OpcodeRS2(RawInstruction raw) noexcept
+      : Opcode(raw), rs2_(bits::extractBits(raw, 20, 24)) {}
 
   operator RawInstruction() const noexcept {
-    return Opcode5::operator RawInstruction() | (rs2_ << 20);
+    return Opcode::operator RawInstruction() | (rs2_ << 20);
   }
 
  private:
   const RawInstruction rs2_;
+};
+
+class Opcode5RS2 : public Opcode5, public OpcodeRS2 {
+ public:
+  Opcode5RS2(RawOpcode opcode, std::uint8_t funct5, std::uint8_t rs2) noexcept
+      : Opcode(opcode), Opcode5(opcode, funct5), OpcodeRS2(opcode, rs2) {}
+  Opcode5RS2(RawInstruction r) noexcept : Opcode(r), Opcode5(r), OpcodeRS2(r) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode5::operator RawInstruction() |
+           OpcodeRS2::operator RawInstruction();
+  }
 };
 
 class Opcode35RS2 : public Opcode3, public Opcode5RS2 {
@@ -165,9 +177,53 @@ class Opcode35RS2 : public Opcode3, public Opcode5RS2 {
   }
 };
 
+class Opcode37RS2 : public Opcode37, public OpcodeRS2 {
+ public:
+  Opcode37RS2(RawOpcode opcode, std::uint8_t funct3, std::uint8_t funct7,
+              std::uint8_t rs2) noexcept
+      : Opcode(opcode),
+        Opcode37(opcode, funct3, funct7),
+        OpcodeRS2(opcode, rs2) {}
+  Opcode37RS2(RawInstruction raw) noexcept
+      : Opcode(raw), Opcode37(raw), OpcodeRS2(raw) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode37::operator RawInstruction() |
+           OpcodeRS2::operator RawInstruction();
+  }
+};
+
+class Opcode12 : public virtual Opcode {
+ public:
+  Opcode12(RawOpcode opcode, std::uint16_t funct12) noexcept
+      : Opcode(opcode), funct12_(funct12) {}
+  Opcode12(RawInstruction r) noexcept
+      : Opcode(r), funct12_(bits::extractBits(r, 20, 31)) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode::operator RawInstruction() | (funct12_ << 20);
+  }
+
+ private:
+  std::uint16_t funct12_;
+};
+
+class Opcode312 : public Opcode3, public Opcode12 {
+ public:
+  Opcode312(RawOpcode opcode, std::uint8_t funct3,
+            std::uint16_t funct12) noexcept
+      : Opcode(opcode), Opcode3(opcode, funct3), Opcode12(opcode, funct12) {}
+  Opcode312(RawInstruction r) noexcept : Opcode(r), Opcode3(r), Opcode12(r) {}
+
+  operator RawInstruction() const noexcept {
+    return Opcode3::operator RawInstruction() |
+           Opcode12::operator RawInstruction();
+  }
+};
+
 using ExtendedOpcodeTuple =
     std::tuple<Opcode, Opcode3, Opcode5, Opcode37, Opcode35, Opcode5RS2,
-               Opcode35RS2, RawInstruction>;
+               Opcode35RS2, Opcode37RS2, Opcode312, RawInstruction>;
 using ExtendedOpcode = helpers::ToVariantT<ExtendedOpcodeTuple>;
 
 class ExtendedOpcodesCreator final {
